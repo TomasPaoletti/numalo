@@ -1,5 +1,3 @@
-import { Company } from "@prisma/client";
-
 export interface UserProps {
   id: string;
   email: string;
@@ -9,7 +7,7 @@ export interface UserProps {
   createdAt: Date;
   updatedAt: Date;
   companyId?: string | null;
-  company?: Company | null;
+  company?: any | null;
 }
 
 export class User {
@@ -21,7 +19,7 @@ export class User {
   createdAt: Date;
   updatedAt: Date;
   companyId?: string | null;
-  company?: Company | null;
+  company?: any | null;
 
   constructor(props: UserProps) {
     this.id = props.id;
@@ -44,7 +42,7 @@ export class User {
     updatedAt: Date,
     password?: string | null,
     companyId?: string | null,
-    company?: Company | null
+    company?: any | null
   ): User {
     return new User({
       id,
