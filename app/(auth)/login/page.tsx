@@ -9,8 +9,8 @@ export const metadata: Metadata = {
 
 export default function LoginPage() {
   return (
-    <div className="flex min-h-svh items-center justify-center p-4 md:p-10">
+    <main className="flex min-h-svh items-center justify-center p-4 md:p-10">
       <LoginForm />
-    </div>
+    </main>
   );
 }
