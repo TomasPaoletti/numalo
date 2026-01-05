@@ -15,7 +15,7 @@ const register = async (data: RegisterSchema): Promise<any> => {
 
   const response = await res.json();
 
-  if (!response.ok) {
+  if (!res.ok) {
     const apiError: ApiError = {
       message: response.error || "Error",
       statusCode: response.status,
