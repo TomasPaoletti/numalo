@@ -14,12 +14,12 @@ export class CreateUserUseCase {
     const { firstName, lastName, email, password } = data;
 
     if (!email || !password || !firstName || !lastName) {
-      throw new ValidationError("Missing required fields");
+      throw new ValidationError("Faltan campos");
     }
 
     const existingUser = await this.userRepository.findByEmail(email);
     if (existingUser) {
-      throw new ConflictError("User already exists");
+      throw new ConflictError("Este email ya esta en uso");
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);

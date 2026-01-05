@@ -8,9 +8,9 @@ import { toast } from "sonner";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { registerSchema, RegisterSchema } from "./schema/register.schema";
+import { loginSchema, LoginSchema } from "./schema/login.schema";
 
-import { register } from "./services";
+import { login } from "./services";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -37,17 +37,15 @@ import {
 } from "@/components/ui/input-group";
 import { Spinner } from "@/components/ui/spinner";
 
-const RegisterForm = () => {
+const LoginForm = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
   const router = useRouter();
 
-  const form = useForm<RegisterSchema>({
-    resolver: zodResolver(registerSchema),
+  const form = useForm<LoginSchema>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
       email: "",
       password: "",
     },
@@ -57,10 +55,11 @@ const RegisterForm = () => {
     setShowPassword((prevState) => !prevState);
   }, []);
 
-  const onSubmit = async (data: RegisterSchema) => {
+  const onSubmit = async (data: LoginSchema) => {
     try {
       setLoading(true);
-      await register(data);
+      await login(data);
+      router.push("/admin");
     } catch (error: any) {
       toast.error(error.message);
     } finally {
@@ -71,51 +70,17 @@ const RegisterForm = () => {
   return (
     <Card className="w-md">
       <CardHeader>
-        <CardTitle>Crear cuenta</CardTitle>
-        <CardDescription>Create una cuenta en pocos pasos</CardDescription>
+        <CardTitle>Iniciar sesion</CardTitle>
+        <CardDescription>Inicia sesion en tu cuenta</CardDescription>
         <CardAction>
-          <Button variant="link" onClick={() => router.push("/login")}>
-            Iniciar sesion
+          <Button variant="link" onClick={() => router.push("/register")}>
+            Crear cuenta
           </Button>
         </CardAction>
       </CardHeader>
       <CardContent>
-        <form id="form-register" onSubmit={form.handleSubmit(onSubmit)}>
+        <form id="form-login" onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup className="gap-3">
-            <Controller
-              name="firstName"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="firstName">Nombre</FieldLabel>
-                  <Input
-                    {...field}
-                    id="firstName"
-                    aria-invalid={fieldState.invalid}
-                  />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-            <Controller
-              name="lastName"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="lastName">Apellido</FieldLabel>
-                  <Input
-                    {...field}
-                    id="lastName"
-                    aria-invalid={fieldState.invalid}
-                  />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
             <Controller
               name="email"
               control={form.control}
@@ -126,6 +91,7 @@ const RegisterForm = () => {
                     {...field}
                     id="email"
                     type="email"
+                    autoComplete="email"
                     aria-invalid={fieldState.invalid}
                   />
                   {fieldState.invalid && (
@@ -146,6 +112,7 @@ const RegisterForm = () => {
                       id="password"
                       type={showPassword ? "text" : "password"}
                       aria-invalid={fieldState.invalid}
+                      autoComplete="current-password"
                     />
                     <InputGroupAddon align="inline-end">
                       <InputGroupButton
@@ -157,6 +124,7 @@ const RegisterForm = () => {
                       </InputGroupButton>
                     </InputGroupAddon>
                   </InputGroup>
+
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
@@ -171,19 +139,14 @@ const RegisterForm = () => {
           disabled={loading}
           type="submit"
           className="w-full"
-          form="form-register"
+          form="form-login"
         >
           {loading && <Spinner />}
-          Crear cuenta
+          Inciar sesion
         </Button>
-        <div className="*:[a]:hover:text-primary text-center text-xs *:[a]:underline *:[a]:underline-offset-2">
-          Haciendo click, aceptas nuestros{" "}
-          <a href="/terms">Terminos y servicios</a> y{" "}
-          <a href="/privacy">Politica de privacidad</a>.
-        </div>
       </CardFooter>
     </Card>
   );
 };
 
-export default RegisterForm;
+export default LoginForm;
