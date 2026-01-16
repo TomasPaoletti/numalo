@@ -1,7 +1,7 @@
 export default function AdminPage() {
   return (
     <div>
-      <p>Registrado</p>
+      <p>Admin</p>
     </div>
   );
 }

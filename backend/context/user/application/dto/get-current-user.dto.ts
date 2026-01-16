@@ -1,3 +1,5 @@
+import { Company } from "@/backend/context/company/domain/entities/company.entity";
+
 export interface GetCurrentUserDto {
   id: string;
 }
@@ -7,9 +9,8 @@ export interface CurrentUserResponseDto {
   email: string;
   firstName: string;
   lastName: string;
-  image?: string | null;
   companyId?: string | null;
-  company?: any; // Cambiar por companyProps cuando creamos la entidad
+  company?: Company;
   createdAt: Date;
   updatedAt: Date;
 }

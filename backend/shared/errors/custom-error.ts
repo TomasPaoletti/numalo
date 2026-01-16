@@ -30,3 +30,15 @@ export class NotFoundError extends CustomError {
     this.name = "NotFoundError";
   }
 }
+
+export class UnauthorizedError extends CustomError {
+  constructor(message: string) {
+    super(message, 401);
+  }
+}
+
+export class ForbiddenError extends CustomError {
+  constructor(message: string) {
+    super(message, 403);
+  }
+}

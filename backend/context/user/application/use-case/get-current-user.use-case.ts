@@ -2,7 +2,9 @@ import {
   CurrentUserResponseDto,
   GetCurrentUserDto,
 } from "@/backend/context/user/application/dto";
+
 import { UserRepository } from "@/backend/context/user/domain/repositories/user.repository";
+
 import { NotFoundError, ValidationError } from "@/backend/shared/errors";
 
 export class GetCurrentUserUseCase {
@@ -12,13 +14,13 @@ export class GetCurrentUserUseCase {
     const { id } = data;
 
     if (!id) {
-      throw new ValidationError("User ID is required");
+      throw new ValidationError("El ID del usuario es requerido");
     }
 
     const user = await this.userRepository.findById(id);
 
     if (!user) {
-      throw new NotFoundError("User not found");
+      throw new NotFoundError("User no encontrado");
     }
 
     return {
