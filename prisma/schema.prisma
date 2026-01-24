@@ -1,6 +1,6 @@
 generator client {
-   provider = "prisma-client"
-   output   = "../app/generated/prisma"
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
 }
 
 datasource db {
@@ -29,7 +29,8 @@ model Company {
   phone     String?
   createdAt DateTime @default(now())
 
-  users User[]
+  users   User[]
+  raffles Raffle[]
 }
 
 model Account {
@@ -49,4 +50,123 @@ model Account {
   user User @relation(fields: [userId], references: [id])
 
   @@unique([provider, providerAccountId])
+}
+
+model Raffle {
+  id          String  @id @default(cuid())
+  title       String
+  description String  @db.Text
+  image       String?
+
+  totalNumbers Int
+  numberPrice  Decimal @db.Decimal(10, 2)
+
+  hasQuantityDiscount Boolean @default(false)
+
+  drawMethod  DrawMethod
+  drawDate    DateTime?
+  drawTrigger DrawTrigger
+
+  status RaffleStatus @default(DRAFT)
+
+  winnerNumber Int?
+  winnerName   String?
+  winnerPhone  String?
+  winnerEmail  String?
+  drawnAt      DateTime?
+
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  quantityDiscounts QuantityDiscount[]
+  payment           Payment?
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  publishedAt DateTime?
+  finishedAt  DateTime?
+
+  @@index([companyId])
+  @@index([status])
+}
+
+model QuantityDiscount {
+  id         String  @id @default(cuid())
+  quantity   Int
+  percentage Decimal @db.Decimal(5, 2)
+
+  raffleId String
+  raffle   Raffle @relation(fields: [raffleId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([raffleId, quantity])
+  @@index([raffleId])
+}
+
+model Payment {
+  id String @id @default(cuid())
+
+  amount   Decimal       @db.Decimal(10, 2)
+  currency String        @default("ARS")
+  status   PaymentStatus @default(PENDING)
+
+  provider          PaymentProvider @default(MERCADO_PAGO)
+  providerPaymentId String?         @unique
+
+  providerMetadata Json?
+
+  paymentType PaymentType
+
+  raffleId String? @unique
+  raffle   Raffle? @relation(fields: [raffleId], references: [id], onDelete: SetNull)
+
+  // Relación con números vendidos (para compra de números)
+  // soldNumbers      SoldNumber[]
+
+  payerName      String?
+  payerEmail     String?
+  payerPhone     String?
+  payerInstagram String?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  paidAt    DateTime?
+
+  @@index([status])
+  @@index([providerPaymentId])
+  @@index([raffleId])
+}
+
+enum DrawMethod {
+  QUINIELA_NACIONAL
+  ALEATORIO
+}
+
+enum DrawTrigger {
+  VENDER_TODO
+  FECHA_FIJA
+}
+
+enum RaffleStatus {
+  DRAFT
+  ACTIVE
+  FINISHED
+}
+
+enum PaymentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum PaymentProvider {
+  MERCADO_PAGO
+  MANUAL
+}
+
+enum PaymentType {
+  RAFFLE_ACTIVATION
+  NUMBER_PURCHASE
 }

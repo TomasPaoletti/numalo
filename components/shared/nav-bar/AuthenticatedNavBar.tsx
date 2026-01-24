@@ -68,7 +68,7 @@ const AuthenticatedNavBar = () => {
           </div>
 
           <div>
-            <Link href="/admin/rifas">
+            <Link href="/admin/create">
               <Button size="sm">Crear rifa</Button>
             </Link>
           </div>
