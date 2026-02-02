@@ -128,6 +128,7 @@ const SectionCompanySettings = ({ company }: SectionCompanySettingsProps) => {
             type="submit"
             form="form-company-settings"
             className="ml-auto"
+            variant="secondary"
           >
             {loading && <Spinner />}
             Guardar
