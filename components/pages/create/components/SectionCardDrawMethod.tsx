@@ -2,6 +2,8 @@
 
 import { Controller, useFormContext } from "react-hook-form";
 
+import { DrawMethod } from "@/types";
+
 import {
   Card,
   CardContent,
@@ -19,7 +21,7 @@ const SectionCardDrawMethod = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Tipo de sorteo</CardTitle>
+        <CardTitle className="text-lg md:text-xl">Tipo de sorteo</CardTitle>
         <CardDescription>Cómo se elige al ganador</CardDescription>
       </CardHeader>
       <CardContent>
@@ -38,7 +40,10 @@ const SectionCardDrawMethod = () => {
                   className="flex flex-col gap-3 sm:flex-row sm:gap-8"
                 >
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="QUINIELA_NACIONAL" id="quiniela" />
+                    <RadioGroupItem
+                      value={DrawMethod.QUINIELA_NACIONAL}
+                      id="quiniela"
+                    />
                     <Label
                       htmlFor="quiniela"
                       className="cursor-pointer font-normal"
@@ -48,7 +53,10 @@ const SectionCardDrawMethod = () => {
                   </div>
 
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="ALEATORIO" id="aleatorio" />
+                    <RadioGroupItem
+                      value={DrawMethod.ALEATORIO}
+                      id="aleatorio"
+                    />
                     <Label
                       htmlFor="aleatorio"
                       className="cursor-pointer font-normal"

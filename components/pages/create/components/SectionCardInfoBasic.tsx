@@ -17,7 +17,7 @@ const SectionCardInfoBasic = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Información básica</CardTitle>
+        <CardTitle className="text-lg md:text-xl">Información básica</CardTitle>
       </CardHeader>
       <CardContent>
         <FieldGroup className="grid grid-cols-2 gap-4 lg:grid-cols-3 lg:gap-3">

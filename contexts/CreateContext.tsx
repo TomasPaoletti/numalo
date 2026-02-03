@@ -1,32 +1,44 @@
 "use client";
 
-import {
-  createSchema,
-  CreateSchemaInput,
-} from "@/components/pages/create/schemas/create.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { createContext, useContext, useRef, useState } from "react";
 import { FormProvider, useForm, UseFormReturn } from "react-hook-form";
 
+import { DrawMethod, DrawTrigger } from "@/types";
+
+import {
+  createSchema,
+  CreateSchemaInput,
+} from "@/components/pages/create/schemas/create.schema";
+
 interface CreateContextType {
   methods: UseFormReturn<CreateSchemaInput>;
-
   currentStep: number;
   totalSteps: number;
+  isFirstStep: boolean;
+  isSecondStep: boolean;
+  isLastStep: boolean;
+  isNextStepDisabled: boolean;
+  imagePreview: string | null;
+  fileInputRef: React.RefObject<HTMLInputElement | null>;
   nextStep: () => void;
   prevStep: () => void;
-  isFirstStep: boolean;
-  isLastStep: boolean;
-
-  imagePreview: string | null;
   setImagePreview: (preview: string | null) => void;
-  fileInputRef: React.RefObject<HTMLInputElement | null>;
   removeImage: () => Promise<void>;
-
   onSubmit: (data: CreateSchemaInput) => void;
 }
 
 const CreateContext = createContext<CreateContextType | undefined>(undefined);
+
+const STEP_1_REQUERIED = ["title", "totalNumbers", "numberPrice"] as const;
+
+const STEP_1_OPTIONAL = [
+  "description",
+  "hasQuantityDiscount",
+  "quantity",
+  "percentage",
+  "image",
+] as const;
 
 export function CreateContextProvider({
   children,
@@ -37,7 +49,7 @@ export function CreateContextProvider({
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const totalSteps = 2;
+  const totalSteps = 3;
 
   const methods = useForm<CreateSchemaInput>({
     resolver: zodResolver(createSchema),
@@ -50,11 +62,31 @@ export function CreateContextProvider({
       quantity: undefined,
       percentage: undefined,
       image: undefined,
+      drawMethod: DrawMethod.QUINIELA_NACIONAL,
+      drawTrigger: DrawTrigger.AL_VENDER_TODO,
+      drawDate: undefined,
     },
     mode: "onTouched",
   });
 
-  const { setValue, trigger } = methods;
+  const { setValue, trigger, watch, formState } = methods;
+
+  const { errors } = formState;
+
+  const hasStep1Errors =
+    STEP_1_REQUERIED.some((field) => errors[field]) ||
+    STEP_1_OPTIONAL.some((field) => errors[field]);
+
+  const isStep1Complete = STEP_1_REQUERIED.every((field) => {
+    const value = watch(field);
+    return value !== undefined && value !== "" && value !== null;
+  });
+
+  const isFirstStep = currentStep === 1;
+  const isSecondStep = currentStep === 2;
+  const isLastStep = currentStep === totalSteps;
+
+  const isNextStepDisabled = !isStep1Complete || hasStep1Errors;
 
   const nextStep = () => {
     if (currentStep < totalSteps) {
@@ -67,9 +99,6 @@ export function CreateContextProvider({
       setCurrentStep((prev) => prev - 1);
     }
   };
-
-  const isFirstStep = currentStep === 1;
-  const isLastStep = currentStep === totalSteps;
 
   const removeImage = async () => {
     setValue("image", undefined);
@@ -92,13 +121,15 @@ export function CreateContextProvider({
         methods,
         currentStep,
         totalSteps,
-        nextStep,
-        prevStep,
         isFirstStep,
+        isSecondStep,
         isLastStep,
         imagePreview,
-        setImagePreview,
         fileInputRef,
+        isNextStepDisabled,
+        nextStep,
+        prevStep,
+        setImagePreview,
         removeImage,
         onSubmit,
       }}

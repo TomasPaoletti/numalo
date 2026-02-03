@@ -4,6 +4,8 @@ import { X } from "lucide-react";
 import Image from "next/image";
 import { Controller, useFormContext } from "react-hook-form";
 
+import { useCreateContext } from "@/contexts/CreateContext";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Field,
@@ -14,7 +16,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { useCreateContext } from "@/contexts/CreateContext";
 
 const SectionCardInfoOptional = () => {
   const { fileInputRef, removeImage, setImagePreview, imagePreview } =
@@ -27,7 +28,9 @@ const SectionCardInfoOptional = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Información adicional</CardTitle>
+        <CardTitle className="text-lg md:text-xl">
+          Información adicional
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <FieldGroup className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-6">
@@ -58,11 +61,14 @@ const SectionCardInfoOptional = () => {
                   <Switch
                     id="hasQuantityDiscount"
                     checked={field.value}
-                    onCheckedChange={(checked) => {
+                    onCheckedChange={async (checked) => {
                       field.onChange(checked);
                       if (!checked) {
                         setValue("quantity", undefined);
                         setValue("percentage", undefined);
+
+                        await trigger("quantity");
+                        await trigger("percentage");
                       }
                     }}
                   />
