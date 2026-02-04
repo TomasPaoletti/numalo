@@ -1,8 +1,14 @@
+import { RaffleStatus } from "@/app/generated/prisma/enums";
+
 import { RaffleEntity } from "@/backend/context/raffle/domain/entities/raffle.entity";
 
 export interface RaffleRepository {
   findById(id: string): Promise<RaffleEntity | null>;
-  findAll(): Promise<RaffleEntity[]>;
+  findByCompanyId(companyId: string): Promise<RaffleEntity[]>;
+  findByStatus(
+    companyId: string,
+    status: RaffleStatus
+  ): Promise<RaffleEntity[]>;
   create(
     raffleData: Omit<RaffleEntity, "id" | "createdAt" | "updatedAt">
   ): Promise<RaffleEntity>;

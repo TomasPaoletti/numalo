@@ -85,3 +85,42 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
+
+export async function GET(req: NextRequest) {
+  try {
+    const { companyId } = await requireAuth();
+
+    if (!companyId) {
+      return NextResponse.json(
+        { error: "Debes tener una compañía asociada" },
+        { status: 403 }
+      );
+    }
+
+    const { searchParams } = new URL(req.url);
+    const status = searchParams.get("status") as RaffleStatus | null;
+
+    const raffleRepository = new PrismaRaffleRepository();
+
+    let raffles;
+    if (status) {
+      raffles = await raffleRepository.findByStatus(companyId, status);
+    } else {
+      raffles = await raffleRepository.findByCompanyId(companyId);
+    }
+
+    return NextResponse.json(raffles);
+  } catch (error) {
+    if (error instanceof CustomError) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: error.statusCode }
+      );
+    }
+
+    const message =
+      error instanceof Error ? error.message : "Internal server error";
+
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
+}

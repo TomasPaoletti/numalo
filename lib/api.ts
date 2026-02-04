@@ -85,13 +85,14 @@ class ApiClient {
   async get<T>(
     endpoint: string,
     params?: Record<string, string>,
-    options?: { tags?: string[]; serverSide?: boolean }
+    options?: { tags?: string[]; serverSide?: boolean; cache?: RequestCache }
   ): Promise<T> {
     return this.request<T>(endpoint, {
       method: "GET",
       params,
       serverSide: options?.serverSide ?? false,
       next: options?.tags ? { tags: options.tags } : undefined,
+      cache: options?.cache ?? "default",
     });
   }
 

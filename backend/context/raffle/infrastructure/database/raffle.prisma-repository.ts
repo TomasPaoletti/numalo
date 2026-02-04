@@ -1,5 +1,7 @@
 import prisma from "@/lib/prisma";
 
+import { RaffleStatus } from "@/app/generated/prisma/enums";
+
 import { RaffleEntity } from "@/backend/context/raffle/domain/entities/raffle.entity";
 import { RaffleRepository } from "@/backend/context/raffle/domain/repositories/raffle.repository";
 import { mapRaffleToDomainEntity } from "@/backend/context/raffle/infrastructure/mappers/raffle.mapper";
@@ -15,11 +17,25 @@ export class PrismaRaffleRepository implements RaffleRepository {
     return mapRaffleToDomainEntity(prismaRaffle);
   }
 
-  async findAll(): Promise<RaffleEntity[]> {
+  async findByCompanyId(companyId: string): Promise<RaffleEntity[]> {
     const prismaRaffles = await prisma.raffle.findMany({
-      orderBy: {
-        createdAt: "desc",
+      where: { companyId },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return prismaRaffles.map(mapRaffleToDomainEntity);
+  }
+
+  async findByStatus(
+    companyId: string,
+    status: RaffleStatus
+  ): Promise<RaffleEntity[]> {
+    const prismaRaffles = await prisma.raffle.findMany({
+      where: {
+        companyId,
+        status,
       },
+      orderBy: { createdAt: "desc" },
     });
 
     return prismaRaffles.map(mapRaffleToDomainEntity);
