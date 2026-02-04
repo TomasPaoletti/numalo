@@ -5,8 +5,14 @@ import { useCreateContext } from "@/contexts/CreateContext";
 import { Button } from "@/components/ui/button";
 
 const SectionFooterCreate = () => {
-  const { isFirstStep, isLastStep, nextStep, prevStep, isNextStepDisabled } =
-    useCreateContext();
+  const {
+    isFirstStep,
+    isLastStep,
+    isNextStepDisabled,
+    loading,
+    nextStep,
+    prevStep,
+  } = useCreateContext();
 
   return (
     <section
@@ -22,6 +28,7 @@ const SectionFooterCreate = () => {
             prevStep();
           }}
           className="flex-1 sm:flex-none"
+          disabled={loading}
         >
           Anterior
         </Button>
@@ -34,7 +41,7 @@ const SectionFooterCreate = () => {
             e.preventDefault();
             nextStep();
           }}
-          disabled={isNextStepDisabled}
+          disabled={isNextStepDisabled || loading}
           className="flex-1 sm:flex-none"
         >
           Siguiente
@@ -44,6 +51,7 @@ const SectionFooterCreate = () => {
           type="submit"
           form="create-form"
           className="flex-1 sm:flex-none"
+          disabled={loading}
         >
           Crear rifa
         </Button>

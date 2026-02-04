@@ -1,8 +1,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import React, { createContext, useContext, useRef, useState } from "react";
 import { FormProvider, useForm, UseFormReturn } from "react-hook-form";
+import { toast } from "sonner";
 
 import { DrawMethod, DrawTrigger } from "@/types";
 
@@ -10,6 +12,7 @@ import {
   createSchema,
   CreateSchemaInput,
 } from "@/components/pages/create/schemas/create.schema";
+import CreateRaffle from "@/components/pages/create/services/create-raffle.service";
 
 interface CreateContextType {
   methods: UseFormReturn<CreateSchemaInput>;
@@ -21,6 +24,7 @@ interface CreateContextType {
   isNextStepDisabled: boolean;
   imagePreview: string | null;
   fileInputRef: React.RefObject<HTMLInputElement | null>;
+  loading: boolean;
   nextStep: () => void;
   prevStep: () => void;
   setImagePreview: (preview: string | null) => void;
@@ -47,7 +51,10 @@ export function CreateContextProvider({
 }) {
   const [currentStep, setCurrentStep] = useState(1);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const router = useRouter();
 
   const totalSteps = 3;
 
@@ -111,8 +118,18 @@ export function CreateContextProvider({
     setImagePreview(null);
   };
 
-  const onSubmit = (data: CreateSchemaInput) => {
-    console.log("Form data:", data);
+  const onSubmit = async (data: CreateSchemaInput) => {
+    try {
+      setLoading(true);
+      await CreateRaffle(data);
+
+      toast.success("Rifa creada exitosamente");
+      router.push("/admin");
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -127,6 +144,7 @@ export function CreateContextProvider({
         imagePreview,
         fileInputRef,
         isNextStepDisabled,
+        loading,
         nextStep,
         prevStep,
         setImagePreview,

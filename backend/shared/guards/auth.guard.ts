@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 
 import { authOptions } from "@/lib/auth";
 
-import { UnauthorizedError } from "../errors/custom-error";
+import { UnauthorizedError } from "@/backend/shared/errors/custom-error";
 
 export async function requireAuth() {
   let session = await getServerSession(authOptions);
