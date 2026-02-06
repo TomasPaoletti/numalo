@@ -3,7 +3,7 @@ import { RaffleStatus } from "@/app/generated/prisma/enums";
 import SectionFilterRaffles from "@/components/pages/admin/components/SectionFilterRaffles";
 import SectionRafflesItems from "@/components/pages/admin/components/SectionRafflesItems";
 
-import GetRaffles from "@/services/raffle/get-raffles.service";
+import { GetRaffles } from "@/services/raffle";
 
 export default async function AdminPage({
   searchParams,

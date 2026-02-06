@@ -14,6 +14,8 @@ import {
 } from "@/components/pages/create/schemas/create.schema";
 import CreateRaffle from "@/components/pages/create/services/create-raffle.service";
 
+import { CallPaymentPreference } from "@/lib/payment";
+
 interface CreateContextType {
   methods: UseFormReturn<CreateSchemaInput>;
   currentStep: number;
@@ -30,6 +32,7 @@ interface CreateContextType {
   setImagePreview: (preview: string | null) => void;
   removeImage: () => Promise<void>;
   onSubmit: (data: CreateSchemaInput) => void;
+  onSaveDraft: () => Promise<void>;
 }
 
 const CreateContext = createContext<CreateContextType | undefined>(undefined);
@@ -121,13 +124,48 @@ export function CreateContextProvider({
   const onSubmit = async (data: CreateSchemaInput) => {
     try {
       setLoading(true);
-      await CreateRaffle(data);
-
+      toast.loading("Creando rifa");
+      const raffle = await CreateRaffle(data);
       toast.success("Rifa creada exitosamente");
+
+      await handlePay(raffle.id);
+    } catch (error: any) {
+      console.error(error.message);
+      toast.dismiss();
+      toast.error("Hubo un problema al crear la rifa. Intente nuevamente");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePay = async (raffleId: string) => {
+    try {
+      toast.loading("Preparando pago");
+      console.log(raffleId);
+      await CallPaymentPreference(raffleId);
+    } catch (error: any) {
+      toast.dismiss();
+      toast.error("Error al procesar el pago. Intentalo mas tarde");
+      router.push("/admin");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onSaveDraft = async () => {
+    const data = methods.getValues();
+
+    toast.loading("Guardando borrador");
+    try {
+      setLoading(true);
+      await CreateRaffle(data);
+      toast.dismiss();
+      toast.success("Borrador guardado exitosamente");
       router.push("/admin");
     } catch (error: any) {
       console.error(error.message);
-      toast.error("Hubo un problema al crear la rifa. Intente nuevamente");
+      toast.dismiss();
+      toast.error("Hubo un problema al guardar el borrador");
     } finally {
       setLoading(false);
     }
@@ -151,6 +189,7 @@ export function CreateContextProvider({
         setImagePreview,
         removeImage,
         onSubmit,
+        onSaveDraft,
       }}
     >
       <FormProvider {...methods}>{children}</FormProvider>

@@ -1,8 +1,10 @@
+import { RaffleEntity } from "@/backend/context/raffle/domain/entities/raffle.entity";
+
 import { CreateSchemaInput } from "@/components/pages/create/schemas/create.schema";
 
 import { apiClient } from "@/lib/api";
 
-const CreateRaffle = async (data: CreateSchemaInput) => {
+const CreateRaffle = async (data: CreateSchemaInput): Promise<RaffleEntity> => {
   const formData = new FormData();
 
   formData.append("title", data.title);
@@ -35,7 +37,7 @@ const CreateRaffle = async (data: CreateSchemaInput) => {
     formData.append("quantityDiscounts", JSON.stringify(quantityDiscounts));
   }
 
-  return apiClient.postFormData("/api/raffle", formData);
+  return apiClient.postFormData<RaffleEntity>("/api/raffle", formData);
 };
 
 export default CreateRaffle;

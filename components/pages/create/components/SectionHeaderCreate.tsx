@@ -6,8 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 
 const SectionHeaderCreate = () => {
-  const { currentStep, isFirstStep, isSecondStep, loading } =
-    useCreateContext();
+  const {
+    currentStep,
+    isFirstStep,
+    isSecondStep,
+    isLastStep,
+    loading,
+    onSaveDraft,
+  } = useCreateContext();
 
   const description = () => {
     if (isFirstStep) return "Completa la informacion sobre la rifa";
@@ -25,9 +31,11 @@ const SectionHeaderCreate = () => {
           <h1 className="text-2xl font-semibold md:text-4xl">Nueva rifa</h1>
           <p className="text-sm md:text-lg">{description()}</p>
         </div>
-        <Button variant="secondary" disabled={loading}>
-          Guardar borrador
-        </Button>
+        {isLastStep && (
+          <Button variant="secondary" disabled={loading} onClick={onSaveDraft}>
+            Guardar borrador
+          </Button>
+        )}
       </section>
       <Progress value={currentStep * 33.33} />
     </>

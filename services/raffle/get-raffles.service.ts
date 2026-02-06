@@ -3,7 +3,7 @@ import { RaffleEntity } from "@/backend/context/raffle/domain/entities/raffle.en
 
 import { apiClient } from "@/lib/api";
 
-const GetRaffles = async (
+export const GetRaffles = async (
   serverSide: boolean,
   status?: RaffleStatus
 ): Promise<RaffleEntity[]> => {
@@ -13,5 +13,3 @@ const GetRaffles = async (
     serverSide,
   });
 };
-
-export default GetRaffles;
