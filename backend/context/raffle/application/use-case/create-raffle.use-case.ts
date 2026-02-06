@@ -7,6 +7,8 @@ import { CreateQuantityDiscountUseCase } from "@/backend/context/quantity-discou
 
 import { ValidationError } from "@/backend/shared/errors";
 
+import { uploadImage } from "@/backend/shared/cloudinary/cloudinary-uploader";
+
 export class CreateRaffleUseCase {
   constructor(
     private raffleRepository: RaffleRepository,
@@ -20,7 +22,7 @@ export class CreateRaffleUseCase {
     const {
       title,
       description,
-      // image, // TODO: Implementar subida de imagen
+      image,
       totalNumbers,
       numberPrice,
       hasQuantityDiscount,
@@ -58,13 +60,27 @@ export class CreateRaffleUseCase {
       }
     }
 
-    // TODO: Subir imagen a S3
-    // const imageUrl = image ? await uploadImageToS3(image) : null;
+    let imageUrl: string | null = null;
+    let imagePublicId: string | null = null;
+
+    if (image) {
+      const arrayBuffer = await image.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+
+      const uploadedImage = await uploadImage(buffer, {
+        folder: `raffle/${companyId}`,
+        publicId: image.name.replace(/\.[^/.]+$/, ""),
+      });
+
+      imageUrl = uploadedImage.url;
+      imagePublicId = uploadedImage.publicId;
+    }
 
     const raffleData = {
       title,
       description: description || "",
-      image: null, // TODO: Usar imageUrl cuando esté implementado
+      image: imageUrl,
+      imagePublicId,
       totalNumbers,
       numberPrice,
       hasQuantityDiscount,

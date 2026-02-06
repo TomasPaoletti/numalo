@@ -8,6 +8,7 @@ export function mapRaffleToDomainEntity(prismaRaffle: Raffle): RaffleEntity {
     title: prismaRaffle.title,
     description: prismaRaffle.description,
     image: prismaRaffle.image,
+    imagePublicId: prismaRaffle.imagePublicId,
     totalNumbers: prismaRaffle.totalNumbers,
     numberPrice: Number(prismaRaffle.numberPrice),
     hasQuantityDiscount: prismaRaffle.hasQuantityDiscount,

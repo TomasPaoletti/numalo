@@ -1,5 +1,8 @@
 import { RaffleStatus } from "@/app/generated/prisma/enums";
+
 import { RaffleRepository } from "@/backend/context/raffle/domain/repositories/raffle.repository";
+
+import { deleteImage } from "@/backend/shared/cloudinary/cloudinary-deleter";
 
 import { NotFoundError, ValidationError } from "@/backend/shared/errors";
 import {
@@ -27,6 +30,14 @@ export class DeleteRaffleUseCase {
 
     if (existingRaffle.status === RaffleStatus.ACTIVE) {
       throw new ConflictError("No se puede eliminar una rifa que esta activa");
+    }
+
+    if (existingRaffle.imagePublicId) {
+      try {
+        await deleteImage(existingRaffle.imagePublicId);
+      } catch (error) {
+        console.error("Failed to delete image:", error);
+      }
     }
 
     return await this.raffleRepository.delete(raffleId);

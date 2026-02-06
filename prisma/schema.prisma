@@ -53,10 +53,11 @@ model Account {
 }
 
 model Raffle {
-  id          String  @id @default(cuid())
-  title       String
-  description String  @db.Text
-  image       String?
+  id            String  @id @default(cuid())
+  title         String
+  description   String  @db.Text
+  image         String?
+  imagePublicId String?
 
   totalNumbers Int
   numberPrice  Decimal @db.Decimal(10, 2)

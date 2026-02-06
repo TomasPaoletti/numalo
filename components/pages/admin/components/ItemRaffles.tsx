@@ -48,7 +48,8 @@ const ItemRaffles = ({ raffles }: ItemRafflesProps) => {
                   alt={raffle.title}
                   width={128}
                   height={128}
-                  className="aspect-square w-full rounded-sm object-cover"
+                  loading="eager"
+                  className="aspect-square size-32 w-full rounded-sm object-cover"
                 />
               ) : (
                 <div className="from-secondary to-border aspect-square size-32 w-full rounded-sm bg-linear-to-br" />

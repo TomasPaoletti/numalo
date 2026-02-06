@@ -9,6 +9,7 @@ export interface RaffleEntity {
   title: string;
   description: string;
   image: string | null;
+  imagePublicId: string | null;
   totalNumbers: number;
   numberPrice: number;
   hasQuantityDiscount: boolean;

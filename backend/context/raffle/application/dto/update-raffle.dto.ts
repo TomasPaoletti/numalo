@@ -8,6 +8,7 @@ export interface UpdateRaffleDto {
   title?: string;
   description?: string;
   image?: string;
+  imagePublicId?: string;
   totalNumbers?: number;
   numberPrice?: number;
   hasQuantityDiscount?: boolean;
