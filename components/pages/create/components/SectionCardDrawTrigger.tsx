@@ -42,7 +42,7 @@ const SectionCardDrawTrigger = () => {
                   value={field.value}
                   onValueChange={async (value) => {
                     field.onChange(value);
-                    if (value === DrawTrigger.AL_VENDER_TODO) {
+                    if (value === DrawTrigger.VENDER_TODO) {
                       setValue("drawDate", undefined);
                       await trigger("drawDate");
                     }
@@ -50,10 +50,7 @@ const SectionCardDrawTrigger = () => {
                   className="flex flex-col gap-3 sm:flex-row sm:gap-8"
                 >
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem
-                      value={DrawTrigger.AL_VENDER_TODO}
-                      id="all"
-                    />
+                    <RadioGroupItem value={DrawTrigger.VENDER_TODO} id="all" />
                     <Label htmlFor="all" className="cursor-pointer font-normal">
                       Al vender todos los números
                     </Label>

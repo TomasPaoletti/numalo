@@ -70,7 +70,7 @@ export function CreateContextProvider({
       percentage: undefined,
       image: undefined,
       drawMethod: DrawMethod.QUINIELA_NACIONAL,
-      drawTrigger: DrawTrigger.AL_VENDER_TODO,
+      drawTrigger: DrawTrigger.VENDER_TODO,
       drawDate: undefined,
     },
     mode: "onTouched",
@@ -126,7 +126,8 @@ export function CreateContextProvider({
       toast.success("Rifa creada exitosamente");
       router.push("/admin");
     } catch (error: any) {
-      toast.error(error.message);
+      console.error(error.message);
+      toast.error("Hubo un problema al crear la rifa. Intente nuevamente");
     } finally {
       setLoading(false);
     }

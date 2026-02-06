@@ -7,4 +7,18 @@ const STATUS_OPTIONS = [
   { value: RaffleStatus.FINISHED, label: "Finalizada" },
 ];
 
-export { STATUS_OPTIONS };
+const RAFFLES_OPTIONS = {
+  [RaffleStatus.DRAFT]: [
+    { value: "edit", label: "Editar" },
+    { value: "pay", label: "Publicar" },
+    { value: "delete", label: "Eliminar" },
+  ],
+  [RaffleStatus.ACTIVE]: [
+    { value: "share", label: "Compartir" },
+    { value: "details", label: "Ver detalles" },
+    { value: "stats", label: "Estadisticas" },
+  ],
+  [RaffleStatus.FINISHED]: [{ value: "stats", label: "Estadisticas" }],
+};
+
+export { RAFFLES_OPTIONS, STATUS_OPTIONS };

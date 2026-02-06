@@ -4,6 +4,6 @@ export enum DrawMethod {
 }
 
 export enum DrawTrigger {
-  AL_VENDER_TODO = "AL_VENDER_TODO",
+  VENDER_TODO = "VENDER_TODO",
   FECHA_FIJA = "FECHA_FIJA",
 }

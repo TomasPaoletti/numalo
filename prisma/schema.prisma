@@ -79,12 +79,13 @@ model Raffle {
   company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   quantityDiscounts QuantityDiscount[]
-  payment           Payment?
+  payments          Payment[]
 
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
   publishedAt DateTime?
   finishedAt  DateTime?
+  soldNumbers SoldNumber[]
 
   @@index([companyId])
   @@index([status])
@@ -118,11 +119,10 @@ model Payment {
 
   paymentType PaymentType
 
-  raffleId String? @unique
-  raffle   Raffle? @relation(fields: [raffleId], references: [id], onDelete: SetNull)
+  raffleId String
+  raffle   Raffle? @relation(fields: [raffleId], references: [id], onDelete: Cascade)
 
-  // Relación con números vendidos (para compra de números)
-  // soldNumbers      SoldNumber[]
+  soldNumbers SoldNumber[]
 
   payerName      String?
   payerEmail     String?
@@ -136,6 +136,19 @@ model Payment {
   @@index([status])
   @@index([providerPaymentId])
   @@index([raffleId])
+}
+
+model SoldNumber {
+  id String @id @default(cuid())
+
+  number    Int
+  raffleId  String
+  paymentId String
+
+  raffle  Raffle  @relation(fields: [raffleId], references: [id])
+  payment Payment @relation(fields: [paymentId], references: [id])
+
+  @@unique([raffleId, number])
 }
 
 enum DrawMethod {

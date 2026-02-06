@@ -48,7 +48,7 @@ const SectionResumeCreate = () => {
       : "Aleatorio (Numeralo)";
 
   const getDrawTriggerLabel = (trigger: DrawTrigger) =>
-    trigger === DrawTrigger.AL_VENDER_TODO
+    trigger === DrawTrigger.VENDER_TODO
       ? "Al vender todos los números"
       : "Fecha fija";
 
