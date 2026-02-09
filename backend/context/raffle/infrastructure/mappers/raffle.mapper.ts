@@ -1,8 +1,16 @@
-import { Raffle } from "@/app/generated/prisma/client";
+import { QuantityDiscount, Raffle } from "@/app/generated/prisma/client";
+
+import { mapQuantityDiscountToDomainEntity } from "@/backend/context/quantity-discount/infrastructure/mappers/quantity-discount.mapper";
 
 import { RaffleEntity } from "@/backend/context/raffle/domain/entities/raffle.entity";
 
-export function mapRaffleToDomainEntity(prismaRaffle: Raffle): RaffleEntity {
+type RaffleWithDiscounts = Raffle & {
+  quantityDiscounts?: QuantityDiscount[];
+};
+
+export function mapRaffleToDomainEntity(
+  prismaRaffle: RaffleWithDiscounts
+): RaffleEntity {
   return {
     id: prismaRaffle.id,
     title: prismaRaffle.title,
@@ -26,5 +34,9 @@ export function mapRaffleToDomainEntity(prismaRaffle: Raffle): RaffleEntity {
     updatedAt: prismaRaffle.updatedAt,
     publishedAt: prismaRaffle.publishedAt,
     finishedAt: prismaRaffle.finishedAt,
+
+    quantityDiscounts: prismaRaffle.quantityDiscounts
+      ? prismaRaffle.quantityDiscounts.map(mapQuantityDiscountToDomainEntity)
+      : undefined,
   };
 }

@@ -102,6 +102,7 @@ export async function GET(req: NextRequest) {
 
     const raffleRepository = new PrismaRaffleRepository();
 
+    // TODO: Cambiar esto por casos de uso
     let raffles;
     if (status) {
       raffles = await raffleRepository.findByStatus(companyId, status);

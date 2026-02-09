@@ -10,6 +10,9 @@ export class PrismaRaffleRepository implements RaffleRepository {
   async findById(id: string): Promise<RaffleEntity | null> {
     const prismaRaffle = await prisma.raffle.findUnique({
       where: { id },
+      include: {
+        quantityDiscounts: true,
+      },
     });
 
     if (!prismaRaffle) return null;
@@ -20,6 +23,9 @@ export class PrismaRaffleRepository implements RaffleRepository {
   async findByCompanyId(companyId: string): Promise<RaffleEntity[]> {
     const prismaRaffles = await prisma.raffle.findMany({
       where: { companyId },
+      include: {
+        quantityDiscounts: true,
+      },
       orderBy: { createdAt: "desc" },
     });
 

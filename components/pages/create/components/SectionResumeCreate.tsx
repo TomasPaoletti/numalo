@@ -5,8 +5,15 @@ import { es } from "date-fns/locale";
 import Image from "next/image";
 import { useFormContext } from "react-hook-form";
 
+import {
+  formatPrice,
+  getDrawMethodLabel,
+  getDrawTriggerLabel,
+} from "@/lib/utils";
+
+import { DrawTrigger } from "@/types";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DrawMethod, DrawTrigger } from "@/types";
 
 interface ResumeItemProps {
   label: string;
@@ -35,22 +42,6 @@ const SectionResumeCreate = () => {
   const drawMethod = watch("drawMethod");
   const drawTrigger = watch("drawTrigger");
   const drawDate = watch("drawDate");
-
-  const formatPrice = (price: number) =>
-    new Intl.NumberFormat("es-AR", {
-      style: "currency",
-      currency: "ARS",
-    }).format(price);
-
-  const getDrawMethodLabel = (method: DrawMethod) =>
-    method === DrawMethod.QUINIELA_NACIONAL
-      ? "Quiniela Nacional"
-      : "Aleatorio (Numeralo)";
-
-  const getDrawTriggerLabel = (trigger: DrawTrigger) =>
-    trigger === DrawTrigger.VENDER_TODO
-      ? "Al vender todos los números"
-      : "Fecha fija";
 
   const formatComision = () => {
     const price = totalNumbers * numberPrice;

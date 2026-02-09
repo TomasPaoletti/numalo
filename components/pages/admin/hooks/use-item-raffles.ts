@@ -29,8 +29,7 @@ export function useItemRaffles() {
         toast.success("Enlace copiado al portapapeles");
         break;
       case "details":
-        // TODO: Implementar navegación a detalles
-        router.push(`/admin/raffle/${raffleId}`);
+        router.push(`/admin/raffle/${raffleId}/stats`);
         break;
       default:
         break;

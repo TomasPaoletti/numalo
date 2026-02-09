@@ -4,6 +4,8 @@ import {
   RaffleStatus,
 } from "@/app/generated/prisma/enums";
 
+import { QuantityDiscountEntity } from "@/backend/context/quantity-discount/domain/entities/quantity-discount.entity";
+
 export interface RaffleEntity {
   id: string;
   title: string;
@@ -17,6 +19,7 @@ export interface RaffleEntity {
   drawDate: Date | null;
   drawTrigger: DrawTrigger;
   status: RaffleStatus;
+  quantityDiscounts?: QuantityDiscountEntity[];
   winnerNumber: number | null;
   winnerName: string | null;
   winnerPhone: string | null;

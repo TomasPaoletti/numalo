@@ -2,7 +2,7 @@ import prisma from "@/lib/prisma";
 
 import { QuantityDiscountEntity } from "@/backend/context/quantity-discount/domain/entities/quantity-discount.entity";
 import { QuantityDiscountRepository } from "@/backend/context/quantity-discount/domain/repositories/quantity-discount.repository";
-import { mapQuantityDiscountToDomainEntity } from "@/backend/context/quantity-discount/infrastructure/mappers/quantity-discount.prisma-repository";
+import { mapQuantityDiscountToDomainEntity } from "@/backend/context/quantity-discount/infrastructure/mappers/quantity-discount.mapper";
 
 export class PrismaQuantityDiscountRepository implements QuantityDiscountRepository {
   async create(

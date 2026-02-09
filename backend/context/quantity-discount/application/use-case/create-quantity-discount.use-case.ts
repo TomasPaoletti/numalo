@@ -14,17 +14,24 @@ export class CreateQuantityDiscountUseCase {
       throw new ValidationError("El id de la rifa es obligatorio");
     }
 
-    if (quantity < 2) {
-      throw new ValidationError("La cantidad mínima es 2");
+    const parsedQuantity = Number(quantity);
+    const parsedPercentage = Number(percentage);
+
+    if (!Number.isInteger(parsedQuantity)) {
+      throw new ValidationError("La cantidad debe ser un número entero");
     }
 
-    if (percentage <= 0 || percentage > 100) {
-      throw new ValidationError("El porcentaje debe estar entre 0 y 100");
+    if (!Number.isInteger(parsedPercentage)) {
+      throw new ValidationError("El porcentaje debe ser un número entero");
+    }
+
+    if (parsedPercentage <= 0 || parsedPercentage > 100) {
+      throw new ValidationError("El porcentaje debe estar entre 1 y 100");
     }
 
     const quantityDiscount = await this.quantityDiscountRepository.create({
-      quantity,
-      percentage,
+      quantity: parsedQuantity,
+      percentage: parsedPercentage,
       raffleId,
     });
 
