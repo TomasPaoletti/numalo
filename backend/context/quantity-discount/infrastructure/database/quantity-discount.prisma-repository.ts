@@ -19,6 +19,12 @@ export class PrismaQuantityDiscountRepository implements QuantityDiscountReposit
     return mapQuantityDiscountToDomainEntity(prismaQuantityDiscount);
   }
 
+  async deleteByRaffleId(raffleId: string): Promise<void> {
+    await prisma.quantityDiscount.deleteMany({
+      where: { raffleId },
+    });
+  }
+
   async delete(id: string): Promise<void> {
     await prisma.quantityDiscount.delete({
       where: { id },

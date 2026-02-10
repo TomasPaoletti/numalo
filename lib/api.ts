@@ -159,6 +159,39 @@ class ApiClient {
       throw new ApiErrorWithDetails(apiError);
     }
   }
+
+  async putFormData<T>(endpoint: string, formData: FormData): Promise<T> {
+    try {
+      const url = this.buildUrl(endpoint);
+
+      const response = await fetch(url, {
+        method: "PUT",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        const apiError: ApiError = {
+          message: data.error || "Error en la petición",
+          statusCode: response.status,
+        };
+        throw new ApiErrorWithDetails(apiError);
+      }
+
+      return data as T;
+    } catch (error) {
+      if (error instanceof ApiErrorWithDetails) {
+        throw error;
+      }
+
+      const apiError: ApiError = {
+        message: error instanceof Error ? error.message : "Error desconocido",
+        statusCode: 500,
+      };
+      throw new ApiErrorWithDetails(apiError);
+    }
+  }
 }
 
 export const apiClient = new ApiClient();

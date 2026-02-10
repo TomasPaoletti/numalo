@@ -8,4 +8,5 @@ export interface QuantityDiscountRepository {
     >
   ): Promise<QuantityDiscountEntity>;
   delete(id: string): Promise<void>;
+  deleteByRaffleId(raffleId: string): Promise<void>;
 }

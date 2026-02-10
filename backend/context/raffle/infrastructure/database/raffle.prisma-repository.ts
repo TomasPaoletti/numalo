@@ -88,6 +88,9 @@ export class PrismaRaffleRepository implements RaffleRepository {
           description: updateData.description,
         }),
         ...(updateData.image !== undefined && { image: updateData.image }),
+        ...(updateData.imagePublicId !== undefined && {
+          imagePublicId: updateData.imagePublicId,
+        }),
         ...(updateData.totalNumbers && {
           totalNumbers: updateData.totalNumbers,
         }),

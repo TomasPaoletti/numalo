@@ -3,11 +3,12 @@ import {
   DrawTrigger,
   RaffleStatus,
 } from "@/app/generated/prisma/enums";
+import { CreateQuantityDto } from "@/backend/context/quantity-discount/application/dto";
 
 export interface UpdateRaffleDto {
   title?: string;
   description?: string;
-  image?: string;
+  image?: File;
   imagePublicId?: string;
   totalNumbers?: number;
   numberPrice?: number;
@@ -23,4 +24,5 @@ export interface UpdateRaffleDto {
   winnerPhone?: string;
   winnerEmail?: string;
   drawnAt?: Date;
+  quantityDiscounts?: CreateQuantityDto[];
 }
