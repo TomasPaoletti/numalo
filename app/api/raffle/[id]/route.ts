@@ -33,11 +33,9 @@ export async function GET(
     const { id } = await params;
 
     const raffleRepository = new PrismaRaffleRepository();
-    const getRaffleStatsByIdUseCase = new GetRaffleByIdUseCase(
-      raffleRepository
-    );
+    const getRaffleByIdUseCase = new GetRaffleByIdUseCase(raffleRepository);
 
-    const raffle = await getRaffleStatsByIdUseCase.execute({
+    const raffle = await getRaffleByIdUseCase.execute({
       raffleId: id,
       companyId,
     });

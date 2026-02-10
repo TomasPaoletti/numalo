@@ -14,7 +14,6 @@ export function useItemRaffles() {
   const handleAction = (action: string, raffleId: string) => {
     switch (action) {
       case "edit":
-        // TODO: Implementar navegación a editar
         router.push(`/admin/raffle/${raffleId}/edit`);
         break;
       case "pay":

@@ -16,7 +16,6 @@ const RAFFLES_OPTIONS = {
   [RaffleStatus.ACTIVE]: [
     { value: "share", label: "Compartir" },
     { value: "details", label: "Ver detalles" },
-    { value: "stats", label: "Estadisticas" },
   ],
   [RaffleStatus.FINISHED]: [{ value: "stats", label: "Estadisticas" }],
 };

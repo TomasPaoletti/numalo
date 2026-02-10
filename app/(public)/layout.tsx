@@ -6,9 +6,9 @@ export default function PublicLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <>
+    <div className="w-full max-w-525">
       {children}
       <Footer />
-    </>
+    </div>
   );
 }
