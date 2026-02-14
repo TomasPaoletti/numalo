@@ -1,6 +1,14 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Footer() {
+  const pathname = usePathname();
+
+  if (pathname.includes("sold-number")) {
+    return null;
+  }
   return (
     <footer className="text-muted-foreground mt-20 border-t px-6 py-10 text-sm md:px-10">
       <div className="mx-auto flex flex-col gap-y-8 md:flex-row md:justify-between">
@@ -31,7 +39,12 @@ export default function Footer() {
           <div className="flex flex-col gap-y-2">
             <span className="text-foreground font-medium">Contacto</span>
             <Link href="/contact">Contacto</Link>
-            <a href="mailto:contacto@numeralo.com">contacto@numeralo.com</a>
+            <a
+              className="text-primary break-all underline underline-offset-2"
+              href="mailto:contacto@numeralo.com"
+            >
+              contacto@numeralo.com
+            </a>
           </div>
         </div>
       </div>
