@@ -121,9 +121,13 @@ class ApiClient {
     });
   }
 
-  async delete<T>(endpoint: string): Promise<T> {
+  async delete<T>(
+    endpoint: string,
+    params?: Record<string, string>
+  ): Promise<T> {
     return this.request<T>(endpoint, {
       method: "DELETE",
+      params,
     });
   }
 

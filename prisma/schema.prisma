@@ -144,10 +144,16 @@ model SoldNumber {
 
   number    Int
   raffleId  String
-  paymentId String
+  paymentId String?
 
-  raffle  Raffle  @relation(fields: [raffleId], references: [id])
-  payment Payment @relation(fields: [paymentId], references: [id])
+  reservedAt    DateTime?
+  reservedBy    String?
+  reservedUntil DateTime?
+
+  status ReservationStatus @default(AVAILABLE)
+
+  raffle  Raffle   @relation(fields: [raffleId], references: [id])
+  payment Payment? @relation(fields: [paymentId], references: [id])
 
   @@unique([raffleId, number])
 }
@@ -183,4 +189,10 @@ enum PaymentProvider {
 enum PaymentType {
   RAFFLE_ACTIVATION
   NUMBER_PURCHASE
+}
+
+enum ReservationStatus {
+  AVAILABLE
+  RESERVED
+  SOLD
 }

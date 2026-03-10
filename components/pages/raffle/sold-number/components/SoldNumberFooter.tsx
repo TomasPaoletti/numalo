@@ -1,11 +1,54 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
+
+import { getOrCreateSessionId } from "@/lib/session";
+
 import { useSelectedNumbers } from "@/contexts/SelectedNumbersContext";
 
-const SoldNumberFooter = () => {
+import CreateReservation from "@/components/pages/raffle/sold-number/services/create-reservation.service";
+
+import { Button } from "@/components/ui/button";
+
+interface SoldNumberFooterProps {
+  raffleId: string;
+}
+
+const SoldNumberFooter = ({ raffleId }: SoldNumberFooterProps) => {
+  const [loading, setLoading] = useState<boolean>(false);
+
   const { selectedNumbers, totalPrice, finalPrice, appliedDiscount } =
     useSelectedNumbers();
+
+  const router = useRouter();
+
+  const handleContinue = async () => {
+    try {
+      setLoading(true);
+      toast.loading("Reservando números...");
+
+      const sessionId = getOrCreateSessionId();
+
+      await CreateReservation({
+        raffleId,
+        numbers: selectedNumbers,
+        sessionId,
+      });
+
+      toast.dismiss();
+
+      toast.success("Números reservados");
+
+      router.push(`/raffle/${raffleId}/checkout?session_id=${sessionId}`);
+    } catch (error: any) {
+      toast.dismiss();
+      toast.error(error.apiError?.message || "Error al reservar números");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (selectedNumbers.length === 0) return null;
 
@@ -40,7 +83,9 @@ const SoldNumberFooter = () => {
             </p>
           )}
         </div>
-        <Button size="lg">Continuar</Button>
+        <Button size="lg" onClick={handleContinue} disabled={loading}>
+          Continuar
+        </Button>
       </div>
     </section>
   );

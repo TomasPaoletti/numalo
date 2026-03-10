@@ -18,7 +18,7 @@ export default async function RaffleIdSoldNumbers({
 
   return (
     <SelectedNumbersProvider raffleWithNumbers={raffleWithNumbers}>
-      <div className="flex w-full flex-col p-6 md:p-12">
+      <div className="flex w-full flex-col p-6 md:py-12">
         <SoldNumberHeader
           title={raffleWithNumbers.title}
           totalNumbers={raffleWithNumbers.totalNumbers}
@@ -26,7 +26,7 @@ export default async function RaffleIdSoldNumbers({
         />
         <SoldNumberFilter />
         <SoldNumberSelector raffleWithNumbers={raffleWithNumbers} />
-        <SoldNumberFooter />
+        <SoldNumberFooter raffleId={raffleWithNumbers.id} />
       </div>
     </SelectedNumbersProvider>
   );

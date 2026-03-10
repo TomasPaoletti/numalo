@@ -10,5 +10,9 @@ export function mapSoldNumberToDomainEntity(
     number: prismaSoldNumbers.number,
     paymentId: prismaSoldNumbers.paymentId,
     raffleId: prismaSoldNumbers.raffleId,
+    reservedAt: prismaSoldNumbers.reservedAt,
+    reservedBy: prismaSoldNumbers.reservedBy,
+    reservedUntil: prismaSoldNumbers.reservedUntil,
+    status: prismaSoldNumbers.status,
   };
 }

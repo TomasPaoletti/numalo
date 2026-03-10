@@ -31,7 +31,9 @@ const SoldNumberHeader = ({
             size={26}
             className="bg-primary/20 text-primary rounded-full p-1"
           />
-          <h1 className="text-semibold text-lg md:text-xl">{title}</h1>
+          <h1 className="text-semibold line-clamp-1 text-lg md:text-xl">
+            {title}
+          </h1>
         </div>
         <p className="text-muted-foreground text-sm">
           Números disponibles:{" "}

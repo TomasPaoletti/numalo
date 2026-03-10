@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 
 export default function HomePage() {
   return (
-    <main className="flex flex-col gap-y-20 p-6 md:p-12">
+    <main className="flex flex-col gap-y-20 p-6 md:py-12">
       <section className="flex flex-col items-center gap-y-6 text-center">
         <h1 className="text-4xl font-bold md:text-5xl">
           Creá rifas online de forma simple y transparente

@@ -107,7 +107,7 @@ const SectionCompanySettings = ({ company }: SectionCompanySettingsProps) => {
                     data-invalid={fieldState.invalid}
                     className="col-span-1"
                   >
-                    <FieldLabel htmlFor="phone">Numero de telefono</FieldLabel>
+                    <FieldLabel htmlFor="phone">Número de telefono</FieldLabel>
                     <Input
                       {...field}
                       id="phone"

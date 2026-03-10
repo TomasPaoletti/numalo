@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { Calendar, DollarSign, ShoppingCart, Ticket } from "lucide-react";
+import { Calendar, DollarSign, ShoppingCart, Tickets } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -35,7 +35,7 @@ export default async function RaffleIdPublicPage({
   }
 
   return (
-    <div className="grid w-full grid-cols-2 gap-6 p-6 md:p-12">
+    <div className="grid w-full grid-cols-2 gap-6 p-6 md:py-12">
       <section
         id="image-raffle"
         className="col-span-full flex flex-col gap-4 md:col-span-1"
@@ -56,13 +56,15 @@ export default async function RaffleIdPublicPage({
         id="info-raffle"
         className="col-span-full flex flex-col gap-4 md:col-span-1"
       >
-        <h1 className="text-2xl font-semibold md:text-4xl">{raffle.title}</h1>
+        <h1 className="line-clamp-1 text-2xl font-semibold md:text-4xl">
+          {raffle.title}
+        </h1>
 
         <div className="flex w-full justify-between gap-x-4">
           <Card className="w-full gap-0">
             <CardHeader>
               <CardTitle className="flex items-center gap-x-1 text-lg md:text-xl">
-                <Ticket className="text-primary" />
+                <Tickets size={18} className="text-primary" />
                 Números
               </CardTitle>
             </CardHeader>
@@ -75,7 +77,7 @@ export default async function RaffleIdPublicPage({
           <Card className="w-full gap-0">
             <CardHeader>
               <CardTitle className="flex items-center gap-x-1 text-lg md:text-xl">
-                <Calendar className="text-primary" />
+                <Calendar size={18} className="text-primary" />
                 Sorteo
               </CardTitle>
             </CardHeader>
@@ -109,7 +111,7 @@ export default async function RaffleIdPublicPage({
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-x-1 text-lg md:text-xl">
-              <DollarSign className="text-primary" />
+              <DollarSign size={18} className="text-primary" />
               Precio por número
             </CardTitle>
           </CardHeader>

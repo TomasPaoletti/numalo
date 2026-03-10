@@ -19,7 +19,7 @@ export default async function AdminLayout({
     <SessionProviderNextAuth>
       <main className="h-dvh w-full">
         <AuthenticatedNavBar />
-        <div className="w-full max-w-525 px-5 pt-20 pb-5 md:px-10 md:pb-8">
+        <div className="container mx-auto w-full px-6 pt-20 pb-6 md:pb-12">
           {!companyId && <AlertCompany />}
           {children}
         </div>

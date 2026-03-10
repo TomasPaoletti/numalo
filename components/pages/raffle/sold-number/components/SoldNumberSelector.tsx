@@ -23,7 +23,7 @@ const SoldNumberSelector = ({ raffleWithNumbers }: SoldNumberSelectorProps) => {
   return (
     <section
       id="sold-number-selector"
-      className="grid grid-cols-10 gap-2 sm:grid-cols-15 md:grid-cols-20 lg:grid-cols-24"
+      className="grid grid-cols-8 gap-2 sm:grid-cols-12 md:grid-cols-16 lg:grid-cols-24"
     >
       {filteredNumbers.map((number) => {
         const isSold = soldNumbers.includes(number);
