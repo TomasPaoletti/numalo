@@ -18,7 +18,15 @@ export class UpsertCompanyUseCase {
     userId: string,
     data: UpsertCompanyDto
   ): Promise<CompanyResponseDto> {
-    const { name, image, phone } = data;
+    const {
+      name,
+      image,
+      phone,
+      mpAccessToken,
+      mpRefreshToken,
+      mpTokenExpiresAt,
+      mpUserId,
+    } = data;
 
     if (!name) {
       throw new ValidationError("El nombre de la compañía es requerido");
@@ -36,6 +44,10 @@ export class UpsertCompanyUseCase {
       name,
       image: image ?? null,
       phone: phone ?? null,
+      mpAccessToken: mpAccessToken ?? null,
+      mpRefreshToken: mpRefreshToken ?? null,
+      mpTokenExpiresAt: mpTokenExpiresAt ?? null,
+      mpUserId: mpUserId ?? null,
     };
 
     if (user.companyId) {
@@ -52,6 +64,10 @@ export class UpsertCompanyUseCase {
       name: company.name,
       image: company.image,
       phone: company.phone,
+      mpAccessToken: company.mpAccessToken,
+      mpRefreshToken: company.mpRefreshToken,
+      mpTokenExpiresAt: company.mpTokenExpiresAt,
+      mpUserId: company.mpUserId,
       createdAt: company.createdAt,
     };
   }

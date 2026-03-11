@@ -10,6 +10,10 @@ export function mapCompanyToDomainEntity(
     name: prismaCompany.name,
     image: prismaCompany.image,
     phone: prismaCompany.phone,
+    mpAccessToken: prismaCompany.mpAccessToken,
+    mpRefreshToken: prismaCompany.mpRefreshToken,
+    mpTokenExpiresAt: prismaCompany.mpTokenExpiresAt,
+    mpUserId: prismaCompany.mpUserId,
     createdAt: prismaCompany.createdAt,
   };
 }

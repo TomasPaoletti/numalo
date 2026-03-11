@@ -28,6 +28,10 @@ export class GetCompanyByIdUseCase {
       name: company.name,
       image: company.image,
       phone: company.phone,
+      mpAccessToken: company.mpAccessToken,
+      mpRefreshToken: company.mpRefreshToken,
+      mpTokenExpiresAt: company.mpTokenExpiresAt,
+      mpUserId: company.mpUserId,
       createdAt: company.createdAt,
     };
   }

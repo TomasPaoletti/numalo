@@ -15,6 +15,7 @@ import {
 } from "@/components/pages/settings/schemas/update-company.schema";
 import UpsertCompany from "@/components/pages/settings/services/update-company.service";
 
+import SectionConnectMp from "@/components/pages/settings/components/SectionConnectMp";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -73,7 +74,7 @@ const SectionCompanySettings = ({ company }: SectionCompanySettingsProps) => {
         <CardHeader>
           <CardTitle>Datos de tu compañia</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex flex-col gap-y-6">
           <form
             id="form-company-settings"
             onSubmit={form.handleSubmit(onSubmit)}
@@ -121,6 +122,7 @@ const SectionCompanySettings = ({ company }: SectionCompanySettingsProps) => {
               />
             </FieldGroup>
           </form>
+          <SectionConnectMp mpAccessToken={company?.mpAccessToken} />
         </CardContent>
         <CardFooter>
           <Button

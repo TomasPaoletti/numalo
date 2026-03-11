@@ -12,9 +12,9 @@ export class UpdateRaffleUseCase {
 
   async execute(
     raffleId: string,
-    companyId: string,
-    imagePreview: string | null,
-    data: UpdateRaffleDto
+    data: UpdateRaffleDto,
+    companyId?: string,
+    imagePreview?: string | null
   ): Promise<RaffleEntity> {
     const {
       title,

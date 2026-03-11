@@ -109,8 +109,6 @@ export async function PUT(
 
     const raffle = await updateRaffleUseCase.execute(
       id,
-      companyId,
-      imagePreview,
       {
         title,
         description: description || undefined,
@@ -122,7 +120,9 @@ export async function PUT(
         drawTrigger,
         drawDate,
         status,
-      }
+      },
+      companyId,
+      imagePreview
     );
 
     await updateQuantityDiscountsUseCase.execute(

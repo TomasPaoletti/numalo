@@ -23,10 +23,16 @@ model User {
 }
 
 model Company {
-  id        String   @id @default(cuid())
-  name      String
-  image     String?
-  phone     String?
+  id    String  @id @default(cuid())
+  name  String
+  image String?
+  phone String?
+
+  mpAccessToken    String?
+  mpRefreshToken   String?
+  mpTokenExpiresAt DateTime?
+  mpUserId         String?
+
   createdAt DateTime @default(now())
 
   users   User[]
