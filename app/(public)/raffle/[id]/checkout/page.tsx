@@ -44,7 +44,11 @@ export default async function RaffleIdCheckout({
           numbers={raffleWithNumbers.numbers}
           finalPrice={raffleWithNumbers.finalPrice}
         />
-        <CheckoutForm />
+        <CheckoutForm
+          raffleId={id}
+          numbers={raffleWithNumbers.numbers}
+          finalPrice={raffleWithNumbers.finalPrice}
+        />
       </div>
     </div>
   );

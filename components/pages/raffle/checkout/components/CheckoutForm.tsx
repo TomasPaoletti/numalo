@@ -3,11 +3,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 import {
   CheckoutSchema,
   checkoutSchema,
 } from "@/components/pages/raffle/checkout/schema/checkout.schema";
+
+import CreateMpPreference from "@/components/pages/raffle/checkout/services/create-mp-preference.service";
 
 import CheckoutReturnDialog from "@/components/pages/raffle/checkout/components/CheckoutReturnDialog";
 
@@ -20,8 +23,15 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
 
-const CheckoutForm = () => {
+interface CheckoutFormProps {
+  raffleId: string;
+  numbers: number[];
+  finalPrice: number;
+}
+
+const CheckoutForm = ({ raffleId, numbers, finalPrice }: CheckoutFormProps) => {
   const [loading, setLoading] = useState(false);
   const [returnDialog, setReturnDialog] = useState(false);
 
@@ -42,10 +52,21 @@ const CheckoutForm = () => {
   const onSubmit = async (data: CheckoutSchema) => {
     try {
       setLoading(true);
-      console.log(data);
+
+      const { initPoint } = await CreateMpPreference({
+        raffleId,
+        numbers,
+        finalPrice,
+        payerName: data.name,
+        payerEmail: data.email,
+        payerPhone: data.phone,
+        payerInstagram: data.instagram,
+      });
+
+      window.location.href = initPoint;
     } catch (error: any) {
+      toast.error(error.message ?? "Error al procesar el pago");
       console.error(error.message);
-    } finally {
       setLoading(false);
     }
   };
@@ -150,6 +171,7 @@ const CheckoutForm = () => {
           form="checkout-form"
           className="w-fit"
         >
+          {loading && <Spinner />}
           Confirmar y pagar
         </Button>
         <Button variant="link" className="w-fit" onClick={handleReturnDialog}>
