@@ -15,6 +15,8 @@ export interface PaymentEntity {
   raffleId: string;
   payerName?: string;
   payerEmail?: string;
+  payerPhone?: string;
+  payerInstagram?: string;
   providerMetadata?: unknown;
   paidAt?: Date | null;
   createdAt: Date;
