@@ -1,5 +1,6 @@
 import { MercadoPagoConfig, Payment } from "mercadopago";
 import { NextRequest, NextResponse } from "next/server";
+import React from "react";
 
 import {
   PaymentStatus,
@@ -8,7 +9,13 @@ import {
   ReservationStatus,
 } from "@/app/generated/prisma/enums";
 
+import { Prisma } from "@/app/generated/prisma/client";
+
 import prisma from "@/lib/prisma";
+
+import { sendEmail } from "@/lib/email/send-email";
+import NumberPurchasedEmail from "@/lib/email/templates/number-purchased.email";
+import RaffleActivatedEmail from "@/lib/email/templates/raffle-activated.email";
 
 import { UpdateRaffleUseCase } from "@/backend/context/raffle/application/use-case";
 import { PrismaRaffleRepository } from "@/backend/context/raffle/infrastructure/database/raffle.prisma-repository";
@@ -16,8 +23,12 @@ import { PrismaRaffleRepository } from "@/backend/context/raffle/infrastructure/
 import { UpsertPaymentUseCase } from "@/backend/context/payment/application/use-case";
 import { PrismaPaymentRepository } from "@/backend/context/payment/infrastructure/database/payment.prisma-repository";
 
-import { Prisma } from "@/app/generated/prisma/client";
 import { CustomError } from "@/backend/shared/errors";
+
+const APP_URL =
+  process.env.NODE_ENV === "production"
+    ? process.env.NEXT_PUBLIC_APP_URL
+    : process.env.NGROK_URL;
 
 function mapStatus(mpStatus: string | undefined): PaymentStatus {
   switch (mpStatus) {
@@ -55,11 +66,15 @@ export async function POST(req: NextRequest) {
     const company = mpUserId
       ? await prisma.company.findFirst({
           where: { mpUserId: String(mpUserId) },
+          include: {
+            users: {
+              select: { email: true },
+              take: 1,
+            },
+          },
         })
       : null;
 
-    // Si encontramos la company usamos su token, sino caemos al token propio
-    // (para RAFFLE_ACTIVATION que fue pagado a nuestra cuenta)
     const accessToken =
       company?.mpAccessToken ?? process.env.MERCADOPAGO_ACCESS_TOKEN!;
 
@@ -75,6 +90,7 @@ export async function POST(req: NextRequest) {
 
     const status = mapStatus(paymentData.status);
 
+    // --- Flujo: compra de números ---
     const numberPurchasePayment = await prisma.payment.findFirst({
       where: {
         id: externalReference,
@@ -83,7 +99,16 @@ export async function POST(req: NextRequest) {
     });
 
     if (numberPurchasePayment) {
-      // --- Flujo: compra de números ---
+      if (
+        numberPurchasePayment.status === PaymentStatus.APPROVED ||
+        numberPurchasePayment.status === PaymentStatus.REJECTED ||
+        numberPurchasePayment.status === PaymentStatus.CANCELLED
+      ) {
+        return NextResponse.json({ received: true });
+      }
+
+      let soldNumbersList: number[] = [];
+
       await prisma.$transaction(async (tx) => {
         await tx.payment.update({
           where: { id: numberPurchasePayment.id },
@@ -96,6 +121,13 @@ export async function POST(req: NextRequest) {
         });
 
         if (status === PaymentStatus.APPROVED) {
+          const soldNumbers = await tx.soldNumber.findMany({
+            where: { paymentId: numberPurchasePayment.id },
+            select: { number: true },
+          });
+
+          soldNumbersList = soldNumbers.map((s) => s.number);
+
           await tx.soldNumber.updateMany({
             where: { paymentId: numberPurchasePayment.id },
             data: {
@@ -122,10 +154,40 @@ export async function POST(req: NextRequest) {
         }
       });
 
+      // Email al comprador solo si fue aprobado
+      if (
+        status === PaymentStatus.APPROVED &&
+        numberPurchasePayment.payerEmail
+      ) {
+        const raffle = await prisma.raffle.findUnique({
+          where: { id: numberPurchasePayment.raffleId },
+          select: { title: true, drawDate: true },
+        });
+
+        if (raffle) {
+          await sendEmail({
+            to: numberPurchasePayment.payerEmail,
+            subject: `Tus números para "${raffle.title}" están confirmados ✅`,
+            template: React.createElement(NumberPurchasedEmail, {
+              payerName: numberPurchasePayment.payerName ?? "Participante",
+              raffleTitle: raffle.title,
+              numbers: soldNumbersList,
+              totalAmount: Number(numberPurchasePayment.amount),
+              raffleUrl: `${APP_URL}/rifa/${numberPurchasePayment.raffleId}`,
+              drawDate: raffle.drawDate
+                ? raffle.drawDate.toLocaleDateString("es-AR")
+                : null,
+            }),
+          }).catch((err) =>
+            console.error("[Email] Error enviando confirmación de compra:", err)
+          );
+        }
+      }
+
       return NextResponse.json({ received: true });
     }
 
-    // --- Flujo: activación de rifa  ---
+    // --- Flujo: activación de rifa ---
     const raffleId = externalReference;
 
     const paymentRepository = new PrismaPaymentRepository();
@@ -152,6 +214,41 @@ export async function POST(req: NextRequest) {
         status: RaffleStatus.ACTIVE,
         publishedAt: new Date(),
       });
+
+      // Email al rifador
+      const raffle = await prisma.raffle.findUnique({
+        where: { id: raffleId },
+        select: {
+          title: true,
+          totalNumbers: true,
+          numberPrice: true,
+          company: {
+            select: {
+              name: true,
+              users: {
+                select: { email: true },
+                take: 1,
+              },
+            },
+          },
+        },
+      });
+
+      if (raffle && raffle.company.users[0]?.email) {
+        await sendEmail({
+          to: raffle.company.users[0].email,
+          subject: `Tu rifa "${raffle.title}" ya está activa 🎉`,
+          template: React.createElement(RaffleActivatedEmail, {
+            companyName: raffle.company.name,
+            raffleTitle: raffle.title,
+            raffleUrl: `${APP_URL}/admin/rifas/${raffleId}`,
+            totalNumbers: raffle.totalNumbers,
+            numberPrice: Number(raffle.numberPrice),
+          }),
+        }).catch((err) =>
+          console.error("[Email] Error enviando email de activación:", err)
+        );
+      }
     }
 
     return NextResponse.json({ received: true });
