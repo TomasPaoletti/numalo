@@ -17,8 +17,8 @@ export interface UpdateRaffleDto {
   drawTrigger?: DrawTrigger;
   drawDate?: Date;
   status?: RaffleStatus;
-  publishedAt?: Date;
-  finishedAt?: Date;
+  publishedAt?: Date | null;
+  finishedAt?: Date | null;
   winnerNumber?: number;
   winnerName?: string;
   winnerPhone?: string;

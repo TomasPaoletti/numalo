@@ -16,47 +16,18 @@ export class UpdateRaffleUseCase {
     companyId?: string,
     imagePreview?: string | null
   ): Promise<RaffleEntity> {
-    const {
-      title,
-      description,
-      image,
-      totalNumbers,
-      numberPrice,
-      hasQuantityDiscount,
-      drawMethod,
-      drawTrigger,
-      drawDate,
-      status,
-      quantityDiscounts,
-    } = data;
-
     if (!raffleId) {
       throw new ValidationError("El id de la rifa es obligatorio");
     }
+
     const existingRaffle = await this.raffleRepository.findById(raffleId);
 
     if (!existingRaffle) {
       throw new NotFoundError("Rifa no encontrada");
     }
 
-    if (!title) {
-      throw new ValidationError("El título es requerido");
-    }
-
-    if (totalNumbers && totalNumbers < 100) {
-      throw new ValidationError("La cantidad mínima de números es 100");
-    }
-
-    if (numberPrice && numberPrice <= 0) {
-      throw new ValidationError("El precio debe ser mayor a 0");
-    }
-
-    if (drawTrigger === "FECHA_FIJA" && !drawDate) {
-      throw new ValidationError("Debes seleccionar una fecha para el sorteo");
-    }
-
-    if (hasQuantityDiscount && quantityDiscounts) {
-      for (const discount of quantityDiscounts) {
+    if (data.hasQuantityDiscount && data.quantityDiscounts) {
+      for (const discount of data.quantityDiscounts) {
         if (discount.quantity < 2) {
           throw new ValidationError("La cantidad mínima para descuento es 2");
         }
@@ -66,52 +37,61 @@ export class UpdateRaffleUseCase {
       }
     }
 
-    let imageUrl: string | null = existingRaffle.image;
-    let imagePublicId: string | null = existingRaffle.imagePublicId;
+    let imageUrl: string | undefined = undefined;
+    let imagePublicId: string | undefined = undefined;
 
-    if (image) {
-      const arrayBuffer = await image.arrayBuffer();
+    if (data.image) {
+      const arrayBuffer = await data.image.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
 
       const uploadedImage = await uploadImage(buffer, {
         folder: `raffle/${companyId}`,
-        publicId: image.name.replace(/\.[^/.]+$/, ""),
+        publicId: data.image.name.replace(/\.[^/.]+$/, ""),
       });
 
       imageUrl = uploadedImage.url;
       imagePublicId = uploadedImage.publicId;
-    }
-
-    if (!imagePreview && existingRaffle.imagePublicId) {
+    } else if (imagePreview === null && existingRaffle.imagePublicId) {
       await deleteImage(existingRaffle.imagePublicId);
-      imageUrl = null;
-      imagePublicId = null;
-    }
-
-    if (imagePreview !== existingRaffle.image && existingRaffle.imagePublicId) {
+      imageUrl = null as any;
+      imagePublicId = null as any;
+    } else if (
+      imagePreview !== undefined &&
+      imagePreview !== existingRaffle.image &&
+      existingRaffle.imagePublicId
+    ) {
       await deleteImage(existingRaffle.imagePublicId);
     }
 
-    const raffleData = {
-      title,
-      description: description || "",
-      image: imageUrl,
-      imagePublicId,
-      totalNumbers,
-      numberPrice,
-      hasQuantityDiscount,
-      drawMethod,
-      drawTrigger,
-      drawDate: drawDate || null,
-      status,
-      winnerNumber: null,
-      winnerName: null,
-      winnerPhone: null,
-      winnerEmail: null,
-      drawnAt: null,
-      publishedAt: null,
-      finishedAt: null,
-      companyId,
+    const raffleData: Partial<Omit<RaffleEntity, "id" | "createdAt">> = {
+      ...(data.title !== undefined && { title: data.title }),
+      ...(data.description !== undefined && { description: data.description }),
+      ...(imageUrl !== undefined && { image: imageUrl }),
+      ...(imagePublicId !== undefined && { imagePublicId }),
+      ...(data.totalNumbers !== undefined && {
+        totalNumbers: data.totalNumbers,
+      }),
+      ...(data.numberPrice !== undefined && { numberPrice: data.numberPrice }),
+      ...(data.hasQuantityDiscount !== undefined && {
+        hasQuantityDiscount: data.hasQuantityDiscount,
+      }),
+      ...(data.drawMethod !== undefined && {
+        drawMethod: data.drawMethod as any,
+      }),
+      ...(data.drawTrigger !== undefined && {
+        drawTrigger: data.drawTrigger as any,
+      }),
+      ...(data.drawDate !== undefined && { drawDate: data.drawDate }),
+      ...(data.status !== undefined && { status: data.status as any }),
+      ...(data.winnerNumber !== undefined && {
+        winnerNumber: data.winnerNumber,
+      }),
+      ...(data.winnerName !== undefined && { winnerName: data.winnerName }),
+      ...(data.winnerPhone !== undefined && { winnerPhone: data.winnerPhone }),
+      ...(data.winnerEmail !== undefined && { winnerEmail: data.winnerEmail }),
+      ...(data.drawnAt !== undefined && { drawnAt: data.drawnAt }),
+      ...(data.publishedAt !== undefined && { publishedAt: data.publishedAt }),
+      ...(data.finishedAt !== undefined && { finishedAt: data.finishedAt }),
     };
 
     const updatedRaffle = await this.raffleRepository.update(

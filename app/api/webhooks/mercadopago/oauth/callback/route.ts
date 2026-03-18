@@ -8,6 +8,8 @@ const APP_URL =
     ? process.env.NEXT_PUBLIC_APP_URL
     : process.env.NGROK_URL;
 
+const TEST_TOKEN = process.env.NODE_ENV === "production" ? "false" : "true";
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
 
@@ -31,6 +33,7 @@ export async function GET(req: NextRequest) {
         code,
         grant_type: "authorization_code",
         redirect_uri: redirectUri,
+        test_token: TEST_TOKEN,
       }),
     });
 
