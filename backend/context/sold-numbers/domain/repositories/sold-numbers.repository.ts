@@ -10,6 +10,7 @@ export interface SoldNumbersRepository {
   delete(id: string): Promise<void>;
   clearExpiredReservations(raffleId: string): Promise<void>;
   getUnavailableNumbers(raffleId: string, numbers: number[]): Promise<number[]>;
+  getSoldNumbersWithPayment(raffleId: string): Promise<SoldNumbersEntity[]>;
   reserveNumbers(data: CreateReservationDto): Promise<void>;
   getReservedNumbersBySession(
     raffleId: string,

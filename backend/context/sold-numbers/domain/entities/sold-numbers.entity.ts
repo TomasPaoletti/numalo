@@ -1,4 +1,5 @@
 import { ReservationStatus } from "@/app/generated/prisma/enums";
+import { PaymentEntity } from "@/backend/context/payment/domain/entities/payment.entity";
 
 export interface SoldNumbersEntity {
   id: string;
@@ -9,4 +10,6 @@ export interface SoldNumbersEntity {
   reservedBy: string | null;
   reservedUntil: Date | null;
   status: ReservationStatus;
+
+  payment?: PaymentEntity;
 }

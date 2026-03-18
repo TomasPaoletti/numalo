@@ -1,9 +1,14 @@
-import { SoldNumber } from "@/app/generated/prisma/client";
+import { Payment, SoldNumber } from "@/app/generated/prisma/client";
+import { mapPaymentToDomainEntity } from "@/backend/context/payment/infrastructure/mappers/payment.mapper";
 
 import { SoldNumbersEntity } from "@/backend/context/sold-numbers/domain/entities/sold-numbers.entity";
 
+type SoldNumberWithPayment = SoldNumber & {
+  payment?: Payment | null;
+};
+
 export function mapSoldNumberToDomainEntity(
-  prismaSoldNumbers: SoldNumber
+  prismaSoldNumbers: SoldNumberWithPayment
 ): SoldNumbersEntity {
   return {
     id: prismaSoldNumbers.id,
@@ -14,5 +19,9 @@ export function mapSoldNumberToDomainEntity(
     reservedBy: prismaSoldNumbers.reservedBy,
     reservedUntil: prismaSoldNumbers.reservedUntil,
     status: prismaSoldNumbers.status,
+
+    payment: prismaSoldNumbers.payment
+      ? mapPaymentToDomainEntity(prismaSoldNumbers.payment)
+      : undefined,
   };
 }
