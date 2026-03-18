@@ -110,6 +110,22 @@ export class PrismaSoldNumberRepository implements SoldNumbersRepository {
     return reservedNumbers.map(mapSoldNumberToDomainEntity);
   }
 
+  async getSoldNumbersWithPayment(
+    raffleId: string
+  ): Promise<SoldNumbersEntity[]> {
+    const soldNumbers = await prisma.soldNumber.findMany({
+      where: {
+        raffleId,
+        status: ReservationStatus.SOLD,
+      },
+      include: {
+        payment: true,
+      },
+    });
+
+    return soldNumbers.map(mapSoldNumberToDomainEntity);
+  }
+
   async findById(id: string): Promise<SoldNumbersEntity | null> {
     const soldNumber = await prisma.soldNumber.findUnique({
       where: { id },

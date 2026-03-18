@@ -12,6 +12,7 @@ import {
   Item,
   ItemActions,
   ItemContent,
+  ItemDescription,
   ItemTitle,
 } from "@/components/ui/item";
 
@@ -65,20 +66,15 @@ const SectionRaffleStats = ({
         </ItemActions>
       </Item>
 
-      <Item
-        variant="muted"
-        className={cn("col-span-1", hasMoney && "cursor-pointer")}
-        onClick={handleNavigateToSoldNumbers}
-      >
+      <Item variant="muted" className="col-span-1">
         <ItemContent>
           <ItemTitle>Dinero recaudado</ItemTitle>
         </ItemContent>
-        <ItemActions>
-          <Button size="sm" variant="outline" disabled={!hasMoney}>
+        <ItemContent className="flex-none text-center">
+          <ItemDescription className="bg-card rounded-sm px-2 py-1">
             {formatPrice(moneyCollected)}
-            <ChevronRight />
-          </Button>
-        </ItemActions>
+          </ItemDescription>
+        </ItemContent>
       </Item>
 
       <Item
