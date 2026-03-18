@@ -1,5 +1,9 @@
-import SoldNumbersTable from "@/components/pages/raffle/sold-numbers/components/SoldNumbersTable";
+import { redirect } from "next/navigation";
+
 import { GetSoldNumbersWithPayment } from "@/services/sold-number";
+
+import SoldNumbersCards from "@/components/pages/raffle/sold-numbers/components/SoldNumbersCards";
+import SoldNumbersTable from "@/components/pages/raffle/sold-numbers/components/SoldNumbersTable";
 
 export default async function RaffleIdSoldNumbers({
   params,
@@ -10,10 +14,15 @@ export default async function RaffleIdSoldNumbers({
 
   const soldNumbers = await GetSoldNumbersWithPayment(id, true);
 
+  if (soldNumbers.length === 0) {
+    redirect("/admin");
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <h1 className="text-2xl font-semibold md:text-4xl">Números vendidos</h1>
       <SoldNumbersTable soldNumbers={soldNumbers} />
+      <SoldNumbersCards soldNumbers={soldNumbers} />
     </div>
   );
 }
