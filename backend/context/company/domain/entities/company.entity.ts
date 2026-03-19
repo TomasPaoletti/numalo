@@ -8,4 +8,5 @@ export interface Company {
   mpTokenExpiresAt: Date | null;
   mpUserId: string | null;
   createdAt: Date;
+  users?: { email: string }[];
 }

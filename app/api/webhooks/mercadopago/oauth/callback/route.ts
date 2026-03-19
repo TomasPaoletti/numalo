@@ -2,11 +2,7 @@ import { redirect } from "next/navigation";
 import { NextRequest } from "next/server";
 
 import prisma from "@/lib/prisma";
-
-const APP_URL =
-  process.env.NODE_ENV === "production"
-    ? process.env.NEXT_PUBLIC_APP_URL
-    : process.env.NGROK_URL;
+import { APP_URL } from "@/lib/utils";
 
 const TEST_TOKEN = process.env.NODE_ENV === "production" ? "false" : "true";
 

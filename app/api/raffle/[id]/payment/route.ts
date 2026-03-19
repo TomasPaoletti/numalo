@@ -6,14 +6,11 @@ import { PrismaRaffleRepository } from "@/backend/context/raffle/infrastructure/
 import { CustomError } from "@/backend/shared/errors";
 import { requireAuth } from "@/backend/shared/guards/auth.guard";
 
+import { APP_URL } from "@/lib/utils";
+
 const client = new MercadoPagoConfig({
   accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN!,
 });
-
-const APP_URL =
-  process.env.NODE_ENV === "production"
-    ? process.env.NEXT_PUBLIC_APP_URL
-    : process.env.NGROK_URL;
 
 export async function POST(
   req: NextRequest,

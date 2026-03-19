@@ -3,10 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { requireAuth } from "@/backend/shared/guards/auth.guard";
 
-const APP_URL =
-  process.env.NODE_ENV === "production"
-    ? process.env.NEXT_PUBLIC_APP_URL
-    : process.env.NGROK_URL;
+import { APP_URL } from "@/lib/utils";
 
 export async function GET(req: NextRequest) {
   const { companyId } = await requireAuth();

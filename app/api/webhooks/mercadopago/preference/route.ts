@@ -8,11 +8,7 @@ import {
 
 import { getValidMpAccessToken } from "@/lib/mercadopago";
 import prisma from "@/lib/prisma";
-
-const APP_URL =
-  process.env.NODE_ENV === "production"
-    ? process.env.NEXT_PUBLIC_APP_URL
-    : process.env.NGROK_URL;
+import { APP_URL } from "@/lib/utils";
 
 export async function POST(req: NextRequest) {
   try {
@@ -126,9 +122,9 @@ export async function POST(req: NextRequest) {
           external_reference: payment.id,
           notification_url: `${APP_URL}/api/webhooks/mercadopago`,
           back_urls: {
-            success: `${APP_URL}/rifa/${raffleId}?payment=success`,
-            failure: `${APP_URL}/rifa/${raffleId}?payment=failure`,
-            pending: `${APP_URL}/rifa/${raffleId}?payment=pending`,
+            success: `${APP_URL}/raffle/${raffleId}?payment=success`,
+            failure: `${APP_URL}/raffle/${raffleId}?payment=failure`,
+            pending: `${APP_URL}/raffle/${raffleId}?payment=pending`,
           },
           auto_return: "approved",
         }),

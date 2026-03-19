@@ -21,3 +21,8 @@ export const getDrawTriggerLabel = (trigger: DrawTrigger) =>
   trigger === DrawTrigger.VENDER_TODO
     ? "Al vender todos los números"
     : "Fecha fija";
+
+export const APP_URL =
+  process.env.NODE_ENV === "production"
+    ? process.env.NEXT_PUBLIC_APP_URL
+    : process.env.NGROK_URL;

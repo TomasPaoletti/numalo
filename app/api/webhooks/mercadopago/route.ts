@@ -1,6 +1,5 @@
 import { MercadoPagoConfig, Payment } from "mercadopago";
 import { NextRequest, NextResponse } from "next/server";
-import React from "react";
 
 import {
   PaymentStatus,
@@ -13,22 +12,17 @@ import { Prisma } from "@/app/generated/prisma/client";
 
 import prisma from "@/lib/prisma";
 
-import { sendEmail } from "@/lib/email/send-email";
-import NumberPurchasedEmail from "@/lib/email/templates/number-purchased.email";
-import RaffleActivatedEmail from "@/lib/email/templates/raffle-activated.email";
-
 import { UpdateRaffleUseCase } from "@/backend/context/raffle/application/use-case";
 import { PrismaRaffleRepository } from "@/backend/context/raffle/infrastructure/database/raffle.prisma-repository";
 
 import { UpsertPaymentUseCase } from "@/backend/context/payment/application/use-case";
 import { PrismaPaymentRepository } from "@/backend/context/payment/infrastructure/database/payment.prisma-repository";
 
-import { CustomError } from "@/backend/shared/errors";
+import { emailSendNumberPurchased } from "@/backend/shared/emails/email-send-number-purchased.email";
+import { emailSendRaffleActivate } from "@/backend/shared/emails/email-send-raffle-activate.email";
+import { RaffleVerifyComplete } from "@/backend/shared/raffle/raffle-verify-complete";
 
-const APP_URL =
-  process.env.NODE_ENV === "production"
-    ? process.env.NEXT_PUBLIC_APP_URL
-    : process.env.NGROK_URL;
+import { CustomError } from "@/backend/shared/errors";
 
 function mapStatus(mpStatus: string | undefined): PaymentStatus {
   switch (mpStatus) {
@@ -154,34 +148,22 @@ export async function POST(req: NextRequest) {
         }
       });
 
+      if (status === PaymentStatus.APPROVED && company) {
+        await RaffleVerifyComplete(numberPurchasePayment.raffleId, company);
+      }
+
       // Email al comprador solo si fue aprobado
       if (
         status === PaymentStatus.APPROVED &&
         numberPurchasePayment.payerEmail
       ) {
-        const raffle = await prisma.raffle.findUnique({
-          where: { id: numberPurchasePayment.raffleId },
-          select: { title: true, drawDate: true },
+        await emailSendNumberPurchased({
+          to: numberPurchasePayment.payerEmail,
+          payerName: numberPurchasePayment.payerName ?? "Participante",
+          raffleId: numberPurchasePayment.raffleId,
+          numbers: soldNumbersList,
+          totalAmount: Number(numberPurchasePayment.amount),
         });
-
-        if (raffle) {
-          await sendEmail({
-            to: numberPurchasePayment.payerEmail,
-            subject: `Tus números para "${raffle.title}" están confirmados ✅`,
-            template: React.createElement(NumberPurchasedEmail, {
-              payerName: numberPurchasePayment.payerName ?? "Participante",
-              raffleTitle: raffle.title,
-              numbers: soldNumbersList,
-              totalAmount: Number(numberPurchasePayment.amount),
-              raffleUrl: `${APP_URL}/rifa/${numberPurchasePayment.raffleId}`,
-              drawDate: raffle.drawDate
-                ? raffle.drawDate.toLocaleDateString("es-AR")
-                : null,
-            }),
-          }).catch((err) =>
-            console.error("[Email] Error enviando confirmación de compra:", err)
-          );
-        }
       }
 
       return NextResponse.json({ received: true });
@@ -216,39 +198,7 @@ export async function POST(req: NextRequest) {
       });
 
       // Email al rifador
-      const raffle = await prisma.raffle.findUnique({
-        where: { id: raffleId },
-        select: {
-          title: true,
-          totalNumbers: true,
-          numberPrice: true,
-          company: {
-            select: {
-              name: true,
-              users: {
-                select: { email: true },
-                take: 1,
-              },
-            },
-          },
-        },
-      });
-
-      if (raffle && raffle.company.users[0]?.email) {
-        await sendEmail({
-          to: raffle.company.users[0].email,
-          subject: `Tu rifa "${raffle.title}" ya está activa 🎉`,
-          template: React.createElement(RaffleActivatedEmail, {
-            companyName: raffle.company.name,
-            raffleTitle: raffle.title,
-            raffleUrl: `${APP_URL}/admin/rifas/${raffleId}`,
-            totalNumbers: raffle.totalNumbers,
-            numberPrice: Number(raffle.numberPrice),
-          }),
-        }).catch((err) =>
-          console.error("[Email] Error enviando email de activación:", err)
-        );
-      }
+      await emailSendRaffleActivate(raffleId);
     }
 
     return NextResponse.json({ received: true });
