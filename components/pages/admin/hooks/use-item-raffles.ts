@@ -27,7 +27,7 @@ export function useItemRaffles() {
         navigator.clipboard.writeText(shareUrl);
         toast.success("Enlace copiado al portapapeles");
         break;
-      case "details":
+      case "stats":
         router.push(`/admin/raffle/${raffleId}/stats`);
         break;
       default:
