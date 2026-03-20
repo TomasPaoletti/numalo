@@ -6,6 +6,12 @@ import { PrismaRaffleRepository } from "@/backend/context/raffle/infrastructure/
 import { CustomError } from "@/backend/shared/errors";
 import { requireAuth } from "@/backend/shared/guards/auth.guard";
 
+import { GetCompanyByIdUseCase } from "@/backend/context/company/application/use-case";
+import { PrismaCompanyRepository } from "@/backend/context/company/infrastructure/database/company.prisma-repository";
+import {
+  GetRaffleByIdUseCase,
+  UpdateRaffleUseCase,
+} from "@/backend/context/raffle/application/use-case";
 import { APP_URL } from "@/lib/utils";
 
 const client = new MercadoPagoConfig({
@@ -28,27 +34,37 @@ export async function POST(
     }
 
     const raffleRepository = new PrismaRaffleRepository();
-    const raffle = await raffleRepository.findById(id);
+    const getRaffleByIdUseCase = new GetRaffleByIdUseCase(raffleRepository);
 
-    if (!raffle) {
-      return NextResponse.json(
-        { error: "Rifa no encontrada" },
-        { status: 404 }
-      );
-    }
-
-    if (raffle.companyId !== companyId) {
-      return NextResponse.json(
-        { error: "No tienes permiso para publicar esta rifa" },
-        { status: 403 }
-      );
-    }
+    const raffle = await getRaffleByIdUseCase.execute({
+      raffleId: id,
+      companyId,
+    });
 
     if (raffle.status !== "DRAFT") {
       return NextResponse.json(
         { error: "La rifa ya está publicada" },
         { status: 400 }
       );
+    }
+
+    const companyRepository = new PrismaCompanyRepository();
+    const getCompanyByIdUseCase = new GetCompanyByIdUseCase(companyRepository);
+
+    const company = await getCompanyByIdUseCase.execute({
+      id: companyId,
+    });
+
+    if (company?.canCreateFreeRaffle) {
+      const updateRaffleUseCase = new UpdateRaffleUseCase(raffleRepository);
+      await updateRaffleUseCase.execute(id, {
+        status: "ACTIVE",
+        publishedAt: new Date(),
+      });
+
+      return NextResponse.json({
+        initPoint: `${APP_URL}/admin/payment/success`,
+      });
     }
 
     const totalRevenue = raffle.totalNumbers * Number(raffle.numberPrice);

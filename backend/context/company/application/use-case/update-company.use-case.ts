@@ -23,18 +23,6 @@ export class UpdateCompanyUseCase {
       throw new NotFoundError("Compañía no encontrada");
     }
 
-    const company = await this.companyRepository.update(id, data);
-
-    return {
-      id: company.id,
-      name: company.name,
-      image: company.image,
-      phone: company.phone,
-      mpAccessToken: company.mpAccessToken,
-      mpRefreshToken: company.mpRefreshToken,
-      mpTokenExpiresAt: company.mpTokenExpiresAt,
-      mpUserId: company.mpUserId,
-      createdAt: company.createdAt,
-    };
+    return await this.companyRepository.update(id, data);
   }
 }

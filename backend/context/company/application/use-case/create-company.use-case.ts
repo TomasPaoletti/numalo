@@ -22,13 +22,14 @@ export class CreateCompanyUseCase {
       mpRefreshToken,
       mpTokenExpiresAt,
       mpUserId,
+      canCreateFreeRaffle,
     } = data;
 
     if (!name) {
       throw new ValidationError("El nombre de la compañía es requerido");
     }
 
-    const company = await this.companyRepository.create(
+    return await this.companyRepository.create(
       {
         name,
         image: image ?? null,
@@ -37,20 +38,9 @@ export class CreateCompanyUseCase {
         mpRefreshToken: mpRefreshToken ?? null,
         mpTokenExpiresAt: mpTokenExpiresAt ?? null,
         mpUserId: mpUserId ?? null,
+        canCreateFreeRaffle: canCreateFreeRaffle ?? false,
       },
       userId
     );
-
-    return {
-      id: company.id,
-      name: company.name,
-      image: company.image,
-      phone: company.phone,
-      mpAccessToken: company.mpAccessToken,
-      mpRefreshToken: company.mpRefreshToken,
-      mpTokenExpiresAt: company.mpTokenExpiresAt,
-      mpUserId: company.mpUserId,
-      createdAt: company.createdAt,
-    };
   }
 }

@@ -6,4 +6,5 @@ export interface UpdateCompanyDto {
   mpRefreshToken?: string | null;
   mpTokenExpiresAt?: Date | null;
   mpUserId?: string | null;
+  canCreateFreeRaffle?: boolean;
 }

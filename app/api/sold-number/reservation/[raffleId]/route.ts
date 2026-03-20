@@ -69,7 +69,6 @@ export async function DELETE(
     const sessionId = searchParams.get("sessionId");
 
     if (!sessionId || sessionId === "undefined") {
-      console.log("entrooooo");
       return NextResponse.json(
         { error: "Session ID requerido" },
         { status: 400 }

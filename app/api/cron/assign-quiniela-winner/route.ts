@@ -21,7 +21,6 @@ export async function POST(req: NextRequest) {
     const winnerNumber = await getQuinielaNumber();
 
     if (!winnerNumber) {
-      console.log("[Cron Quiniela] Número no disponible todavía");
       return NextResponse.json(
         { error: "Número no disponible" },
         { status: 200 }

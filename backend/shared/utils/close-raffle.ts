@@ -46,10 +46,6 @@ async function closeRaffle({
       winnerEmail: soldNumber?.payment?.payerEmail ?? undefined,
       winnerPhone: soldNumber?.payment?.payerPhone ?? undefined,
     };
-
-    console.log(
-      `[Cron] Rifa "${raffle.title}" — ganador aleatorio: #${winnerNumber}`
-    );
   }
 
   await updateRaffleUseCase.execute(raffle.id, {

@@ -26,6 +26,7 @@ export class UpsertCompanyUseCase {
       mpRefreshToken,
       mpTokenExpiresAt,
       mpUserId,
+      canCreateFreeRaffle,
     } = data;
 
     if (!name) {
@@ -48,6 +49,7 @@ export class UpsertCompanyUseCase {
       mpRefreshToken: mpRefreshToken ?? null,
       mpTokenExpiresAt: mpTokenExpiresAt ?? null,
       mpUserId: mpUserId ?? null,
+      canCreateFreeRaffle: canCreateFreeRaffle ?? false,
     };
 
     if (user.companyId) {
@@ -67,6 +69,7 @@ export class UpsertCompanyUseCase {
       mpAccessToken: company.mpAccessToken,
       mpRefreshToken: company.mpRefreshToken,
       mpTokenExpiresAt: company.mpTokenExpiresAt,
+      canCreateFreeRaffle: company.canCreateFreeRaffle,
       mpUserId: company.mpUserId,
       createdAt: company.createdAt,
     };

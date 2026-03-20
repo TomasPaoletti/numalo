@@ -7,6 +7,7 @@ export interface Company {
   mpRefreshToken: string | null;
   mpTokenExpiresAt: Date | null;
   mpUserId: string | null;
+  canCreateFreeRaffle: boolean;
   createdAt: Date;
   users?: { email: string }[];
 }

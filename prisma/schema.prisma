@@ -33,6 +33,8 @@ model Company {
   mpTokenExpiresAt DateTime?
   mpUserId         String?
 
+  canCreateFreeRaffle Boolean @default(false)
+
   createdAt DateTime @default(now())
 
   users   User[]

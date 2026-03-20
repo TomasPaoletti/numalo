@@ -141,7 +141,6 @@ export function CreateContextProvider({
   const handlePay = async (raffleId: string) => {
     try {
       toast.loading("Preparando pago");
-      console.log(raffleId);
       await CallPaymentPreference(raffleId);
     } catch (error: any) {
       toast.dismiss();

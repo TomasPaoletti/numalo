@@ -14,6 +14,7 @@ export function mapCompanyToDomainEntity(
     mpRefreshToken: prismaCompany.mpRefreshToken,
     mpTokenExpiresAt: prismaCompany.mpTokenExpiresAt,
     mpUserId: prismaCompany.mpUserId,
+    canCreateFreeRaffle: prismaCompany.canCreateFreeRaffle,
     createdAt: prismaCompany.createdAt,
   };
 }

@@ -23,16 +23,6 @@ export class GetCompanyByIdUseCase {
       throw new NotFoundError("Compañía no encontrada");
     }
 
-    return {
-      id: company.id,
-      name: company.name,
-      image: company.image,
-      phone: company.phone,
-      mpAccessToken: company.mpAccessToken,
-      mpRefreshToken: company.mpRefreshToken,
-      mpTokenExpiresAt: company.mpTokenExpiresAt,
-      mpUserId: company.mpUserId,
-      createdAt: company.createdAt,
-    };
+    return company;
   }
 }

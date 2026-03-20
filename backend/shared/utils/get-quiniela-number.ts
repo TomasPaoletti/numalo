@@ -22,12 +22,10 @@ export async function getQuinielaNumber(): Promise<number | null> {
     const match = html.match(/Nocturna<\/a><br><a[^>]+>(\d{4})/);
 
     if (!match) {
-      console.log("[Quiniela] Número no disponible todavía");
       return null;
     }
 
     const number = parseInt(match[1], 10);
-    console.log(`[Quiniela] Número obtenido: ${number}`);
     return number;
   } catch (error) {
     console.error("[Quiniela] Error al obtener número:", error);

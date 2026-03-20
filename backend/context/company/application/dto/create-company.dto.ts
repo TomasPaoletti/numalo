@@ -6,6 +6,7 @@ export interface CreateCompanyDto {
   mpRefreshToken?: string | null;
   mpTokenExpiresAt?: Date | null;
   mpUserId?: string | null;
+  canCreateFreeRaffle?: boolean;
 }
 
 export interface CompanyResponseDto {
@@ -17,5 +18,6 @@ export interface CompanyResponseDto {
   mpRefreshToken: string | null;
   mpTokenExpiresAt: Date | null;
   mpUserId: string | null;
+  canCreateFreeRaffle: boolean;
   createdAt: Date;
 }
