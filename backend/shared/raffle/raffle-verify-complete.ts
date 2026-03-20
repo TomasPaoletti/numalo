@@ -1,4 +1,4 @@
-import { DrawTrigger, RaffleStatus } from "@/app/generated/prisma/enums";
+import { RaffleStatus } from "@/app/generated/prisma/enums";
 
 import prisma from "@/lib/prisma";
 
@@ -22,8 +22,6 @@ export async function RaffleVerifyComplete(
     companyId: company.id,
   });
 
-  if (raffle.drawTrigger !== DrawTrigger.VENDER_TODO) return;
-
   if (raffle.status !== RaffleStatus.ACTIVE) return;
 
   const soldCount = await prisma.soldNumber.count({
@@ -35,5 +33,5 @@ export async function RaffleVerifyComplete(
 
   if (soldCount < raffle.totalNumbers) return;
 
-  closeRaffle({ raffle, company });
+  await closeRaffle({ raffle, company });
 }
