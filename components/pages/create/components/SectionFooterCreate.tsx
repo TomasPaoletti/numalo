@@ -10,6 +10,7 @@ const SectionFooterCreate = () => {
     isLastStep,
     isNextStepDisabled,
     loading,
+    companyId,
     nextStep,
     prevStep,
   } = useCreateContext();
@@ -51,7 +52,7 @@ const SectionFooterCreate = () => {
           type="submit"
           form="create-form"
           className="flex-1 sm:flex-none"
-          disabled={loading}
+          disabled={loading || !companyId}
         >
           Crear rifa
         </Button>

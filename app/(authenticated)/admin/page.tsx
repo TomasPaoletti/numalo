@@ -18,7 +18,10 @@ export default async function AdminPage({
       ? (params.status as RaffleStatus)
       : undefined;
 
-  const raffles = await GetRaffles(true, status);
+  const raffles = await GetRaffles(true, status).catch((error) => {
+    if (error?.apiError?.statusCode === 403) return [];
+    throw error;
+  });
 
   return (
     <div className="flex flex-col gap-6">

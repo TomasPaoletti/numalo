@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { createContext, useContext, useRef, useState } from "react";
 import { FormProvider, useForm, UseFormReturn } from "react-hook-form";
@@ -29,6 +30,7 @@ interface EditContextType {
   imagePreview: string | null;
   fileInputRef: React.RefObject<HTMLInputElement | null>;
   loading: boolean;
+  companyId: string | null | undefined;
   nextStep: () => void;
   prevStep: () => void;
   setImagePreview: (preview: string | null) => void;
@@ -64,7 +66,9 @@ export function EditContextProvider({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const router = useRouter();
+  const user = useSession();
 
+  const companyId = user.data?.user.companyId;
   const totalSteps = 3;
 
   const methods = useForm<CreateSchemaInput>({
@@ -189,6 +193,7 @@ export function EditContextProvider({
         fileInputRef,
         isNextStepDisabled,
         loading,
+        companyId,
         nextStep,
         prevStep,
         setImagePreview,

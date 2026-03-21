@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -73,6 +74,10 @@ const SectionCompanySettings = ({ company }: SectionCompanySettingsProps) => {
       <Card>
         <CardHeader>
           <CardTitle>Datos de tu compañia</CardTitle>
+          <CardDescription>
+            Agrega un nombre y un telefono para la que los compradores sepan de
+            quien es la rifa
+          </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-y-6">
           <form
@@ -122,7 +127,9 @@ const SectionCompanySettings = ({ company }: SectionCompanySettingsProps) => {
               />
             </FieldGroup>
           </form>
-          <SectionConnectMp mpAccessToken={company?.mpAccessToken} />
+          {company && company.id && (
+            <SectionConnectMp mpAccessToken={company?.mpAccessToken} />
+          )}
         </CardContent>
         <CardFooter>
           <Button

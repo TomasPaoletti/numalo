@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 
 const SectionHeaderEdit = () => {
-  const { currentStep, loading, onSaveDraft } = useEditContext();
+  const { currentStep, loading, companyId, onSaveDraft } = useEditContext();
 
   return (
     <>
@@ -28,7 +28,11 @@ const SectionHeaderEdit = () => {
             <h1 className="text-2xl font-semibold md:text-4xl">Editar rifa</h1>
           </div>
 
-          <Button variant="secondary" disabled={loading} onClick={onSaveDraft}>
+          <Button
+            variant="secondary"
+            disabled={loading || !companyId}
+            onClick={onSaveDraft}
+          >
             Guardar borrador
           </Button>
         </div>

@@ -10,6 +10,7 @@ const SectionFooterEdit = () => {
     isLastStep,
     isNextStepDisabled,
     loading,
+    companyId,
     nextStep,
     prevStep,
   } = useEditContext();
@@ -51,7 +52,7 @@ const SectionFooterEdit = () => {
           type="submit"
           form="edit-form"
           className="flex-1 sm:flex-none"
-          disabled={loading}
+          disabled={loading || !companyId}
         >
           Publicar rifa
         </Button>

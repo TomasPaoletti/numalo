@@ -1,5 +1,6 @@
 "use client";
 
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -12,6 +13,9 @@ const AuthenticatedNavBar = () => {
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const pathname = usePathname();
+  const user = useSession();
+
+  const companyId = user.data?.user.companyId;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -68,9 +72,15 @@ const AuthenticatedNavBar = () => {
           </div>
 
           <div>
-            <Link href="/admin/create">
-              <Button size="sm">Crear rifa</Button>
-            </Link>
+            {companyId ? (
+              <Link href="/admin/create">
+                <Button size="sm">Crear rifa</Button>
+              </Link>
+            ) : (
+              <Button size="sm" disabled>
+                Crear rifa
+              </Button>
+            )}
           </div>
         </div>
       </div>

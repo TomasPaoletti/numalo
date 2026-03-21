@@ -12,6 +12,7 @@ const SectionHeaderCreate = () => {
     isSecondStep,
     isLastStep,
     loading,
+    companyId,
     onSaveDraft,
   } = useCreateContext();
 
@@ -31,7 +32,7 @@ const SectionHeaderCreate = () => {
           <h1 className="text-2xl font-semibold md:text-4xl">Nueva rifa</h1>
           <p className="text-sm md:text-lg">{description()}</p>
         </div>
-        {isLastStep && (
+        {isLastStep && companyId && (
           <Button variant="secondary" disabled={loading} onClick={onSaveDraft}>
             Guardar borrador
           </Button>
