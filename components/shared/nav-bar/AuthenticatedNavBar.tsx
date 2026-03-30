@@ -13,9 +13,10 @@ const AuthenticatedNavBar = () => {
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const pathname = usePathname();
-  const user = useSession();
+  const { data } = useSession();
 
-  const companyId = user.data?.user.companyId;
+  const companyId = data?.user.companyId;
+  const connectMp = data?.user.mpConnected;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -72,7 +73,7 @@ const AuthenticatedNavBar = () => {
           </div>
 
           <div>
-            {companyId ? (
+            {companyId && connectMp ? (
               <Link href="/admin/create">
                 <Button size="sm">Crear rifa</Button>
               </Link>

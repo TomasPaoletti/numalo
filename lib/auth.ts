@@ -49,6 +49,7 @@ export const authOptions: AuthOptions = {
           firstName: user.firstName,
           lastName: user.lastName,
           companyId: user.companyId,
+          mpConnected: !!user.company?.mpAccessToken,
         };
       },
     }),
@@ -63,10 +64,18 @@ export const authOptions: AuthOptions = {
         token.firstName = user.firstName;
         token.lastName = user.lastName;
         token.companyId = user.companyId;
+        token.mpConnected = user.mpConnected;
       }
-      if (trigger === "update" && session?.companyId) {
-        token.companyId = session.companyId;
+
+      if (trigger === "update") {
+        if (session?.companyId) {
+          token.companyId = session.companyId;
+        }
+        if (session?.mpConnected !== undefined) {
+          token.mpConnected = session.mpConnected;
+        }
       }
+
       return token;
     },
     async session({ session, token }) {
@@ -77,6 +86,7 @@ export const authOptions: AuthOptions = {
         session.user.name = token.name || null;
         session.user.email = token.email || null;
         session.user.companyId = (token.companyId as string | null) || null;
+        session.user.mpConnected = (token.mpConnected as boolean) ?? false;
       }
       return session;
     },

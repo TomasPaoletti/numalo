@@ -1,6 +1,7 @@
 "use client";
 
 import { FilePlus } from "lucide-react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,9 @@ import {
 } from "@/components/ui/empty";
 
 const SectionEmptyStateAdmin = () => {
+  const { data } = useSession();
+  const companyId = data?.user.companyId;
+  const connectMp = data?.user.mpConnected;
   return (
     <Empty>
       <EmptyHeader>
@@ -27,9 +31,15 @@ const SectionEmptyStateAdmin = () => {
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
-        <Link href="/admin/create">
-          <Button size="sm">Crear rifa</Button>
-        </Link>
+        {companyId && connectMp ? (
+          <Link href="/admin/create">
+            <Button size="sm">Crear rifa</Button>
+          </Link>
+        ) : (
+          <Button size="sm" disabled>
+            Crear rifa
+          </Button>
+        )}
       </EmptyContent>
     </Empty>
   );
