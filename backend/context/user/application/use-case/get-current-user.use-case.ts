@@ -23,23 +23,6 @@ export class GetCurrentUserUseCase {
       throw new NotFoundError("User no encontrado");
     }
 
-    return {
-      id: user.id,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      companyId: user.companyId,
-      company: user.company
-        ? {
-            id: user.company.id,
-            name: user.company.name,
-            image: user.company.image,
-            phone: user.company.phone,
-            createdAt: user.company.createdAt,
-          }
-        : undefined,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-    };
+    return user;
   }
 }

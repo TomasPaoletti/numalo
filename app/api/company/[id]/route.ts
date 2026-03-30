@@ -8,15 +8,16 @@ import { requireAuth } from "@/backend/shared/guards/auth.guard";
 
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAuth();
+    const { id } = await params;
 
     const companyRepository = new PrismaCompanyRepository();
     const getCompanyByIdUseCase = new GetCompanyByIdUseCase(companyRepository);
 
-    const company = await getCompanyByIdUseCase.execute({ id: params.id });
+    const company = await getCompanyByIdUseCase.execute({ id });
 
     return NextResponse.json(company);
   } catch (error) {
