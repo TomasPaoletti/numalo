@@ -10,7 +10,7 @@ export default function Footer() {
     return null;
   }
   return (
-    <footer className="text-muted-foreground mt-20 border-t px-6 py-10 text-sm md:px-10">
+    <footer className="text-muted-foreground mt-auto border-t px-6 py-10 text-sm md:px-10">
       <div className="mx-auto flex flex-col gap-y-8 md:flex-row md:justify-between">
         <div className="max-w-sm">
           <h3 className="text-foreground text-base font-semibold">Numeralo</h3>
