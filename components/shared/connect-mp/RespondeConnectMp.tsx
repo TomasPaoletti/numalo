@@ -1,5 +1,6 @@
 "use client";
 
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -11,9 +12,19 @@ const ResponseConnectMp = ({ response }: ResponseCoonectMpProps) => {
   const router = useRouter();
   const [timeLeft, setTimeLeft] = useState(3);
 
+  const { update } = useSession();
+
+  const navigateToAdmin = async () => {
+    if (response === "success") {
+      console.log("entra");
+      await update({ mpConnected: true });
+    }
+    router.push("/admin/settings");
+  };
+
   useEffect(() => {
     if (timeLeft === 0) {
-      router.push("/admin/settings");
+      navigateToAdmin();
       return;
     }
 
