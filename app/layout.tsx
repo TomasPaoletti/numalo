@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 
 import { Toaster } from "@/components/ui/sonner";
 
@@ -40,6 +41,11 @@ export default function RootLayout({
         >
           {children}
           <Toaster position="top-center" />
+          <Script
+            src="https://cloud.umami.is/script.js"
+            data-website-id="4842ccbc-1a75-421b-a181-15284310eecc"
+            strategy="afterInteractive"
+          />
         </ThemeProvider>
       </body>
     </html>

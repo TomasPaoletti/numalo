@@ -122,9 +122,9 @@ export async function POST(req: NextRequest) {
           external_reference: payment.id,
           notification_url: `${APP_URL}/api/webhooks/mercadopago`,
           back_urls: {
-            success: `${APP_URL}/raffle/${raffleId}?payment=success`,
-            failure: `${APP_URL}/raffle/${raffleId}?payment=failure`,
-            pending: `${APP_URL}/raffle/${raffleId}?payment=pending`,
+            success: `${APP_URL}/raffle/${raffleId}/payment/success`,
+            failure: `${APP_URL}/raffle/${raffleId}/payment/failure`,
+            pending: `${APP_URL}/raffle/${raffleId}/payment/pending`,
           },
           auto_return: "approved",
         }),
