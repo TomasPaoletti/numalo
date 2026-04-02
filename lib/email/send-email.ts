@@ -9,13 +9,16 @@ interface SendEmailParams {
 }
 
 export async function sendEmail({ to, subject, template }: SendEmailParams) {
-  const from = process.env.RESEND_FROM_EMAIL ?? "onboarding@resend.dev";
+  const from = process.env.RESEND_FROM_EMAIL;
+
+  if (!from) return;
 
   const { data, error } = await resend.emails.send({
     from,
     to,
     subject,
     react: template,
+    replyTo: "hola@numeraloapp.com",
   });
 
   if (error) {
