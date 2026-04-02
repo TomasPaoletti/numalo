@@ -89,13 +89,28 @@ export const authOptions: AuthOptions = {
       }
       return true;
     },
-    async jwt({ token, user, trigger, session }) {
-      if (user) {
+    async jwt({ token, user, trigger, session, account }) {
+      if (user && account?.provider === "credentials") {
         token.id = user.id;
         token.firstName = user.firstName;
         token.lastName = user.lastName;
         token.companyId = user.companyId;
         token.mpConnected = user.mpConnected;
+      }
+
+      if (user && account?.provider === "google") {
+        const dbUser = await prisma.user.findUnique({
+          where: { email: user.email! },
+          include: { company: true },
+        });
+
+        if (dbUser) {
+          token.id = dbUser.id;
+          token.firstName = dbUser.firstName;
+          token.lastName = dbUser.lastName;
+          token.companyId = dbUser.companyId;
+          token.mpConnected = !!dbUser.company?.mpAccessToken;
+        }
       }
 
       if (trigger === "update") {
