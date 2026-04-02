@@ -12,6 +12,7 @@ import { loginSchema, LoginSchema } from "./schema/login.schema";
 
 import { login } from "./services";
 
+import { ButtonGoogleAuth } from "@/components/shared/google/ButtonGoogleAuth";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -144,6 +145,7 @@ const LoginForm = () => {
           {loading && <Spinner />}
           Inciar sesion
         </Button>
+        <ButtonGoogleAuth mode="login" />
       </CardFooter>
     </Card>
   );

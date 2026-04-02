@@ -3,6 +3,7 @@ export interface CreateUserDto {
   lastName: string;
   email: string;
   password: string;
+  fromGoogle: boolean;
 }
 
 export interface CreateUserResponseDto {
