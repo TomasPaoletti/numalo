@@ -14,7 +14,7 @@ const nextConfig: NextConfig = {
       {
         source: "/:path*",
         has: [{ type: "host", value: "www.numeraloapp.com" }],
-        destination: "https://numeralo.com/:path*",
+        destination: "https://numeraloapp.com/:path*",
         permanent: true,
       },
     ];
