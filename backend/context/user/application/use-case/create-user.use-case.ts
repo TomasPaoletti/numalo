@@ -12,9 +12,9 @@ export class CreateUserUseCase {
   constructor(private userRepository: UserRepository) {}
 
   async execute(data: CreateUserDto): Promise<CreateUserResponseDto> {
-    const { firstName, lastName, email, password } = data;
+    const { firstName, lastName, email, password, fromGoogle } = data;
 
-    if (!email || !password || !firstName || !lastName) {
+    if (!email || !firstName || !lastName) {
       throw new ValidationError("Faltan campos");
     }
 
@@ -23,7 +23,11 @@ export class CreateUserUseCase {
       throw new ConflictError("Este email ya esta en uso");
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    if (!fromGoogle && !password) {
+      throw new ValidationError("No es de google y no tiene contraseña");
+    }
+
+    const hashedPassword = fromGoogle ? null : await bcrypt.hash(password, 10);
 
     const user = await this.userRepository.create({
       email,

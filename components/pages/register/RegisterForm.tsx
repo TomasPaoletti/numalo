@@ -12,6 +12,7 @@ import { registerSchema, RegisterSchema } from "./schema/register.schema";
 
 import { register } from "./services";
 
+import { ButtonGoogleAuth } from "@/components/shared/google/ButtonGoogleAuth";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -176,6 +177,7 @@ const RegisterForm = () => {
           {loading && <Spinner />}
           Crear cuenta
         </Button>
+        <ButtonGoogleAuth mode="register" />
         <div className="*:[a]:hover:text-primary text-center text-xs *:[a]:underline *:[a]:underline-offset-2">
           Haciendo click, aceptas nuestros{" "}
           <a href="/terms">Terminos y servicios</a> y{" "}
