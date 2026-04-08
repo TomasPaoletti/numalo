@@ -78,15 +78,10 @@ model Raffle {
 
   status RaffleStatus @default(DRAFT)
 
-  winnerNumber Int?
-  winnerName   String?
-  winnerPhone  String?
-  winnerEmail  String?
-  drawnAt      DateTime?
-
   companyId String
   company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
+  winners           RaffleWinner[]
   quantityDiscounts QuantityDiscount[]
   payments          Payment[]
 
@@ -164,6 +159,26 @@ model SoldNumber {
   payment Payment? @relation(fields: [paymentId], references: [id])
 
   @@unique([raffleId, number])
+}
+
+model RaffleWinner {
+  id String @id @default(cuid())
+
+  position Int
+
+  number Int
+  name   String?
+  phone  String?
+  email  String?
+
+  raffleId String
+  raffle   Raffle @relation(fields: [raffleId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([raffleId, position])
+  @@unique([raffleId, number])
+  @@index([raffleId])
 }
 
 enum DrawMethod {

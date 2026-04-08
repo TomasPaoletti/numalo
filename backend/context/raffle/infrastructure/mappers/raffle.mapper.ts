@@ -1,11 +1,17 @@
-import { QuantityDiscount, Raffle } from "@/app/generated/prisma/client";
+import {
+  QuantityDiscount,
+  Raffle,
+  RaffleWinner,
+} from "@/app/generated/prisma/client";
 
 import { mapQuantityDiscountToDomainEntity } from "@/backend/context/quantity-discount/infrastructure/mappers/quantity-discount.mapper";
+import { mapRaffleWinnerToDomainEntity } from "@/backend/context/raffle-winner/infrastructure/mappers/raffle-winner.mapper";
 
 import { RaffleEntity } from "@/backend/context/raffle/domain/entities/raffle.entity";
 
 type RaffleWithDiscounts = Raffle & {
   quantityDiscounts?: QuantityDiscount[];
+  winners?: RaffleWinner[];
 };
 
 export function mapRaffleToDomainEntity(
@@ -24,11 +30,6 @@ export function mapRaffleToDomainEntity(
     drawDate: prismaRaffle.drawDate,
     drawTrigger: prismaRaffle.drawTrigger,
     status: prismaRaffle.status,
-    winnerNumber: prismaRaffle.winnerNumber,
-    winnerName: prismaRaffle.winnerName,
-    winnerPhone: prismaRaffle.winnerPhone,
-    winnerEmail: prismaRaffle.winnerEmail,
-    drawnAt: prismaRaffle.drawnAt,
     companyId: prismaRaffle.companyId,
     createdAt: prismaRaffle.createdAt,
     updatedAt: prismaRaffle.updatedAt,
@@ -37,6 +38,9 @@ export function mapRaffleToDomainEntity(
 
     quantityDiscounts: prismaRaffle.quantityDiscounts
       ? prismaRaffle.quantityDiscounts.map(mapQuantityDiscountToDomainEntity)
+      : undefined,
+    winners: prismaRaffle.winners
+      ? prismaRaffle.winners.map(mapRaffleWinnerToDomainEntity)
       : undefined,
   };
 }

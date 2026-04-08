@@ -19,10 +19,5 @@ export interface UpdateRaffleDto {
   status?: RaffleStatus;
   publishedAt?: Date | null;
   finishedAt?: Date | null;
-  winnerNumber?: number;
-  winnerName?: string;
-  winnerPhone?: string;
-  winnerEmail?: string;
-  drawnAt?: Date;
   quantityDiscounts?: CreateQuantityDto[];
 }

@@ -83,13 +83,6 @@ export class UpdateRaffleUseCase {
       }),
       ...(data.drawDate !== undefined && { drawDate: data.drawDate }),
       ...(data.status !== undefined && { status: data.status as any }),
-      ...(data.winnerNumber !== undefined && {
-        winnerNumber: data.winnerNumber,
-      }),
-      ...(data.winnerName !== undefined && { winnerName: data.winnerName }),
-      ...(data.winnerPhone !== undefined && { winnerPhone: data.winnerPhone }),
-      ...(data.winnerEmail !== undefined && { winnerEmail: data.winnerEmail }),
-      ...(data.drawnAt !== undefined && { drawnAt: data.drawnAt }),
       ...(data.publishedAt !== undefined && { publishedAt: data.publishedAt }),
       ...(data.finishedAt !== undefined && { finishedAt: data.finishedAt }),
     };
