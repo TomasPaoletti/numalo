@@ -25,6 +25,7 @@ export class CreateRaffleUseCase {
       image,
       totalNumbers,
       numberPrice,
+      winnersCount,
       hasQuantityDiscount,
       drawMethod,
       drawTrigger,
@@ -83,6 +84,7 @@ export class CreateRaffleUseCase {
       imagePublicId,
       totalNumbers,
       numberPrice,
+      winnersCount,
       hasQuantityDiscount,
       drawMethod,
       drawTrigger,
@@ -91,6 +93,11 @@ export class CreateRaffleUseCase {
       publishedAt: null,
       finishedAt: null,
       companyId,
+      titular: null,
+      alias: null,
+      cbu: null,
+      cuit: null,
+      banco: null,
     };
 
     const raffle = await this.raffleRepository.create(raffleData);

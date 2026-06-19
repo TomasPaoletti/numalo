@@ -15,6 +15,7 @@ export interface RaffleEntity {
   imagePublicId: string | null;
   totalNumbers: number;
   numberPrice: number;
+  winnersCount: number;
   hasQuantityDiscount: boolean;
   drawMethod: DrawMethod;
   drawDate: Date | null;
@@ -22,6 +23,11 @@ export interface RaffleEntity {
   status: RaffleStatus;
   quantityDiscounts?: QuantityDiscountEntity[];
   winners?: RaffleWinnerEntity[];
+  titular: string | null;
+  alias: string | null;
+  cbu: string | null;
+  cuit: string | null;
+  banco: string | null;
   companyId: string;
   createdAt: Date;
   updatedAt: Date;

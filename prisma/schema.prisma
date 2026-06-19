@@ -70,6 +70,8 @@ model Raffle {
   totalNumbers Int
   numberPrice  Decimal @db.Decimal(10, 2)
 
+  winnersCount Int @default(1)
+
   hasQuantityDiscount Boolean @default(false)
 
   drawMethod  DrawMethod
@@ -77,6 +79,12 @@ model Raffle {
   drawTrigger DrawTrigger
 
   status RaffleStatus @default(DRAFT)
+
+  titular String?
+  alias   String?
+  cbu     String?
+  cuit    String?
+  banco   String?
 
   companyId String
   company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
@@ -132,6 +140,9 @@ model Payment {
   payerEmail     String?
   payerPhone     String?
   payerInstagram String?
+
+  comprobanteUrl       String?
+  comprobantePublicId  String?
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
