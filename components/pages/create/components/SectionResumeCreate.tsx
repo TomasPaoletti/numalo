@@ -34,6 +34,7 @@ const SectionResumeCreate = () => {
   const title = watch("title");
   const totalNumbers = watch("totalNumbers");
   const numberPrice = watch("numberPrice");
+  const winnersCount = watch("winnersCount");
   const description = watch("description");
   const hasQuantityDiscount = watch("hasQuantityDiscount");
   const quantity = watch("quantity");
@@ -73,6 +74,13 @@ const SectionResumeCreate = () => {
             <ResumeItem
               label="Precio por número"
               value={formatPrice(numberPrice)}
+            />
+          )}
+
+          {winnersCount && (
+            <ResumeItem
+              label="Cantidad de ganadores"
+              value={`${winnersCount} ${winnersCount === 1 ? "ganador" : "ganadores"}`}
             />
           )}
 

@@ -17,7 +17,7 @@ export default async function RaffleIdStatsPage({
       <h1 className="text-2xl font-semibold md:text-4xl">{raffle.title}</h1>
       <SectionRaffleStats
         stats={raffle.stats}
-        winner={raffle.winnerName}
+        winners={raffle.winners ?? []}
         totalNumbers={raffle.totalNumbers}
       />
       <SectionRaffleDetails raffle={raffle} />

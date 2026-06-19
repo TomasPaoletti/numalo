@@ -12,6 +12,7 @@ export interface CreateRaffleDto {
   image?: File;
   totalNumbers: number;
   numberPrice: number;
+  winnersCount: number;
   hasQuantityDiscount: boolean;
   drawMethod: DrawMethod;
   drawTrigger: DrawTrigger;

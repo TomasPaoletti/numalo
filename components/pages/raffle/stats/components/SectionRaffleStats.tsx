@@ -18,15 +18,19 @@ import {
 
 interface SectionRaffleStatsProps {
   stats: RaffleStats;
-  winner: string | null;
+  winners: { name?: string | null; number: number }[];
   totalNumbers: number;
 }
 
 const SectionRaffleStats = ({
   stats,
-  winner,
+  winners,
   totalNumbers,
 }: SectionRaffleStatsProps) => {
+  const winner =
+    winners.length > 0
+      ? winners.map((w) => w.name ?? `Número ${w.number}`).join(", ")
+      : null;
   const { id } = useParams();
   const router = useRouter();
 

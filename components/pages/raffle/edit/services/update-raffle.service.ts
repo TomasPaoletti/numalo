@@ -12,6 +12,7 @@ const UpdateRaffle = async (
   formData.append("title", data.title);
   formData.append("totalNumbers", String(data.totalNumbers));
   formData.append("numberPrice", String(data.numberPrice));
+  formData.append("winnersCount", String(data.winnersCount));
   formData.append("hasQuantityDiscount", data.hasQuantityDiscount.toString());
   formData.append("drawMethod", data.drawMethod);
   formData.append("drawTrigger", data.drawTrigger);

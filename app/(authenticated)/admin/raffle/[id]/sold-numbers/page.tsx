@@ -25,9 +25,13 @@ export default async function RaffleIdSoldNumbers({
     redirect("/admin");
   }
 
+  const winnerNumbers = raffle.winners?.map((w) => w.number) ?? [];
+
   const sortedNumbers = soldNumbers.sort((a, b) => {
-    if (a.number === raffle.winnerNumber) return -1;
-    if (b.number === raffle.winnerNumber) return 1;
+    const aIsWinner = winnerNumbers.includes(a.number);
+    const bIsWinner = winnerNumbers.includes(b.number);
+    if (aIsWinner && !bIsWinner) return -1;
+    if (!aIsWinner && bIsWinner) return 1;
     return a.number - b.number;
   });
 
@@ -36,19 +40,16 @@ export default async function RaffleIdSoldNumbers({
       <h1 className="line-clamp-1 text-2xl font-semibold break-all md:text-4xl">
         Números vendidos de {raffle.title}
       </h1>
-      {raffle.status === RaffleStatus.FINISHED && (
-        <SoldNumbersWinnerData
-          winnerName={raffle.winnerName}
-          winnerNumber={raffle.winnerNumber}
-        />
+      {raffle.status === RaffleStatus.FINISHED && raffle.winners && (
+        <SoldNumbersWinnerData winners={raffle.winners} />
       )}
       <SoldNumbersTable
         soldNumbers={sortedNumbers}
-        winnerNumber={raffle.winnerNumber}
+        winnerNumbers={winnerNumbers}
       />
       <SoldNumbersCards
         soldNumbers={sortedNumbers}
-        winnerNumber={raffle.winnerNumber}
+        winnerNumbers={winnerNumbers}
       />
     </div>
   );

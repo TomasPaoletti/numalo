@@ -59,6 +59,7 @@ export class PrismaRaffleRepository implements RaffleRepository {
         image: raffleData.image,
         totalNumbers: raffleData.totalNumbers,
         numberPrice: raffleData.numberPrice,
+        winnersCount: raffleData.winnersCount,
         hasQuantityDiscount: raffleData.hasQuantityDiscount,
         drawMethod: raffleData.drawMethod,
         drawDate: raffleData.drawDate,
@@ -92,6 +93,9 @@ export class PrismaRaffleRepository implements RaffleRepository {
           totalNumbers: updateData.totalNumbers,
         }),
         ...(updateData.numberPrice && { numberPrice: updateData.numberPrice }),
+        ...(updateData.winnersCount !== undefined && {
+          winnersCount: updateData.winnersCount,
+        }),
         ...(updateData.hasQuantityDiscount !== undefined && {
           hasQuantityDiscount: updateData.hasQuantityDiscount,
         }),

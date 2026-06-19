@@ -23,18 +23,17 @@ import {
 
 interface SoldNumbersCardsProps {
   soldNumbers: SoldNumbersEntity[];
-  winnerNumber: number | null;
+  winnerNumbers: number[];
 }
 
 const SoldNumbersCards = ({
   soldNumbers,
-  winnerNumber,
+  winnerNumbers,
 }: SoldNumbersCardsProps) => {
   return (
     <section id="table-sold-numbers" className="flex flex-col gap-4 md:hidden">
       {soldNumbers.map((soldNumber) => {
-        const isWinner =
-          winnerNumber != null && soldNumber.number === winnerNumber;
+        const isWinner = winnerNumbers.includes(soldNumber.number);
 
         return (
           <Item key={soldNumber.id} variant={isWinner ? "muted" : "outline"}>

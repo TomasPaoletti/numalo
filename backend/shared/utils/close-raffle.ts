@@ -11,7 +11,14 @@ import { UpdateRaffleUseCase } from "@/backend/context/raffle/application/use-ca
 
 import { PrismaRaffleRepository } from "@/backend/context/raffle/infrastructure/database/raffle.prisma-repository";
 
+import { GetSoldNumbersWithPayment } from "@/backend/context/sold-numbers/application/use-case";
+import { PrismaSoldNumberRepository } from "@/backend/context/sold-numbers/infrastructure/database/sold-numbers.prisma-repository";
 import { emailSendRaffleCompleted } from "@/backend/shared/emails/email-send-raffle-completed.email";
+import { ValidationError } from "@/backend/shared/errors";
+
+function shuffleArray<T>(array: T[]): T[] {
+  return [...array].sort(() => Math.random() - 0.5);
+}
 
 async function closeRaffle({
   raffle,
@@ -22,42 +29,50 @@ async function closeRaffle({
 }) {
   const raffleRepository = new PrismaRaffleRepository();
   const updateRaffleUseCase = new UpdateRaffleUseCase(raffleRepository);
-
-  let winnerData: {
-    winnerNumber: number;
-    winnerName: string | undefined;
-    winnerEmail: string | undefined;
-    winnerPhone: string | undefined;
-  } | null = null;
+  const soldNumbersRepository = new PrismaSoldNumberRepository();
+  const getSoldNumbersWithPayment = new GetSoldNumbersWithPayment(
+    raffleRepository,
+    soldNumbersRepository
+  );
 
   if (raffle.drawMethod === DrawMethod.ALEATORIO) {
-    const winnerNumber = Math.floor(Math.random() * raffle.totalNumbers) + 1;
+    const soldNumbers = await getSoldNumbersWithPayment.execute(raffle.id);
 
-    const soldNumber = await prisma.soldNumber.findUnique({
-      where: {
-        raffleId_number: { raffleId: raffle.id, number: winnerNumber },
-      },
-      include: { payment: true },
-    });
+    if (soldNumbers.length === 0) {
+      throw new ValidationError("No hay números vendidos para sortear");
+    }
 
-    winnerData = {
-      winnerNumber,
-      winnerName: soldNumber?.payment?.payerName ?? undefined,
-      winnerEmail: soldNumber?.payment?.payerEmail ?? undefined,
-      winnerPhone: soldNumber?.payment?.payerPhone ?? undefined,
-    };
+    if (soldNumbers.length < raffle.winnersCount) {
+      throw new ValidationError(
+        "No hay suficientes participantes para la cantidad de ganadores"
+      );
+    }
+
+    const shuffled = shuffleArray(soldNumbers);
+
+    const winners = shuffled.slice(0, raffle.winnersCount);
+
+    await prisma.$transaction(
+      winners.map((winner, index) =>
+        prisma.raffleWinner.create({
+          data: {
+            position: index + 1,
+            number: winner.number,
+            name: winner.payment?.payerName,
+            email: winner.payment?.payerEmail,
+            phone: winner.payment?.payerPhone,
+            raffle: {
+              connect: { id: raffle.id },
+            },
+          },
+        })
+      )
+    );
   }
 
   await updateRaffleUseCase.execute(raffle.id, {
     status: RaffleStatus.FINISHED,
     finishedAt: new Date(),
-    ...(winnerData && {
-      winnerNumber: winnerData.winnerNumber,
-      winnerName: winnerData.winnerName,
-      winnerEmail: winnerData.winnerEmail,
-      winnerPhone: winnerData.winnerPhone,
-      drawnAt: new Date(),
-    }),
   });
 
   await emailSendRaffleCompleted({

@@ -86,6 +86,28 @@ const SectionCardInfoBasic = () => {
               </Field>
             )}
           />
+          <Controller
+            name="winnersCount"
+            control={control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid} className="col-span-1">
+                <FieldLabel htmlFor="winnersCount">
+                  Cantidad de ganadores
+                </FieldLabel>
+                <Input
+                  {...field}
+                  id="winnersCount"
+                  type="number"
+                  aria-invalid={fieldState.invalid}
+                  placeholder="1"
+                  value={field.value ?? ""}
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
         </FieldGroup>
       </CardContent>
     </Card>

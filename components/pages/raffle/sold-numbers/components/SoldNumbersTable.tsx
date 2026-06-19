@@ -16,12 +16,12 @@ import {
 
 interface SoldNumbersTableProps {
   soldNumbers: SoldNumbersEntity[];
-  winnerNumber: number | null;
+  winnerNumbers: number[];
 }
 
 const SoldNumbersTable = ({
   soldNumbers,
-  winnerNumber,
+  winnerNumbers,
 }: SoldNumbersTableProps) => {
   return (
     <section id="table-sold-numbers" className="hidden md:flex">
@@ -37,8 +37,7 @@ const SoldNumbersTable = ({
         </TableHeader>
         <TableBody>
           {soldNumbers.map((soldNumber) => {
-            const isWinner =
-              winnerNumber != null && soldNumber.number === winnerNumber;
+            const isWinner = winnerNumbers.includes(soldNumber.number);
 
             return (
               <TableRow

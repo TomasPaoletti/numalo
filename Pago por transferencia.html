@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Numeralo — Pago por transferencia</title>
+<link rel="icon" href="assets/logo.png" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" />
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/lucide@0.562.0/dist/umd/lucide.min.js"></script>
+
+<!-- Numeralo design system -->
+<link rel="stylesheet" href="_ds/numeralo-design-system-ea9c8fc2-7807-4776-af4b-594b03edd4fb/tokens/fonts.css" />
+<link rel="stylesheet" href="_ds/numeralo-design-system-ea9c8fc2-7807-4776-af4b-594b03edd4fb/tokens/colors.css" />
+<link rel="stylesheet" href="_ds/numeralo-design-system-ea9c8fc2-7807-4776-af4b-594b03edd4fb/tokens/typography.css" />
+<link rel="stylesheet" href="_ds/numeralo-design-system-ea9c8fc2-7807-4776-af4b-594b03edd4fb/tokens/spacing.css" />
+<link rel="stylesheet" href="_ds/numeralo-design-system-ea9c8fc2-7807-4776-af4b-594b03edd4fb/tokens/base.css" />
+<link rel="stylesheet" href="_ds/numeralo-design-system-ea9c8fc2-7807-4776-af4b-594b03edd4fb/styles.css" />
+<script src="_ds/numeralo-design-system-ea9c8fc2-7807-4776-af4b-594b03edd4fb/_ds_bundle.js"></script>
+
+<style>
+  *{box-sizing:border-box;}
+  html,body{margin:0;}
+  body{
+    background:var(--background);color:var(--foreground);
+    font-family:var(--font-sans);
+    -webkit-font-smoothing:antialiased;
+  }
+  .mono{font-family:var(--font-mono);}
+  .muted{color:var(--muted-foreground);}
+
+  /* top nav */
+  .nav{
+    position:sticky;top:0;z-index:30;
+    border-bottom:1px solid var(--border);
+    background:color-mix(in oklch,var(--background) 78%,transparent);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  }
+  .nav__in{max-width:680px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:10px;}
+  .wordmark{display:flex;align-items:center;gap:9px;font-weight:600;font-size:17px;letter-spacing:-.02em;}
+  .wordmark img{width:28px;height:28px;border-radius:7px;display:block;}
+
+  .wrap{max-width:680px;margin:0 auto;padding:30px 24px 132px;}
+
+  .backlink{
+    display:inline-flex;align-items:center;gap:6px;background:none;border:none;cursor:pointer;
+    color:var(--muted-foreground);font-family:var(--font-sans);font-size:14px;padding:6px 8px 6px 4px;
+    border-radius:var(--radius-md);transition:color .15s ease,background-color .15s ease;
+  }
+  .backlink:hover{color:var(--foreground);background:var(--muted);}
+
+  .stack{display:flex;flex-direction:column;}
+  .row{display:flex;align-items:center;}
+
+  /* bank detail rows */
+  .bank{display:flex;flex-direction:column;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;}
+  .bank__row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 16px;}
+  .bank__row + .bank__row{border-top:1px solid var(--border);}
+  .bank__k{font-size:12.5px;color:var(--muted-foreground);letter-spacing:.01em;}
+  .bank__v{font-size:15px;font-weight:500;text-align:right;word-break:break-all;}
+  .copybtn{
+    display:inline-flex;align-items:center;justify-content:center;gap:6px;
+    height:32px;padding:0 11px;flex-shrink:0;
+    border:1px solid var(--border);border-radius:var(--radius-md);
+    background:transparent;color:var(--foreground);cursor:pointer;
+    font-family:var(--font-sans);font-size:12.5px;font-weight:500;
+    transition:background-color .15s ease,border-color .15s ease,color .15s ease;
+  }
+  .copybtn:hover{background:var(--muted);}
+  .copybtn--done{color:var(--chart-1);border-color:color-mix(in oklch,var(--chart-1) 45%,transparent);}
+
+  /* dropzone */
+  .drop{
+    position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+    text-align:center;padding:34px 22px;cursor:pointer;
+    border:2px dashed var(--input);border-radius:var(--radius-lg);
+    background:color-mix(in oklch,var(--muted) 40%,transparent);
+    transition:border-color .15s ease,background-color .15s ease;
+  }
+  .drop:hover{border-color:color-mix(in oklch,var(--primary) 55%,transparent);}
+  .drop--over{border-color:var(--primary);background:color-mix(in oklch,var(--primary) 12%,transparent);}
+  .drop__ico{
+    width:46px;height:46px;border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;
+    background:color-mix(in oklch,var(--primary) 16%,transparent);color:var(--primary);
+  }
+  .drop input{display:none;}
+
+  .file{display:flex;align-items:center;gap:14px;padding:12px;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--background);}
+  .file__thumb{width:60px;height:60px;border-radius:var(--radius-md);object-fit:cover;flex-shrink:0;background:var(--muted);}
+  .iconbtn{
+    width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;
+    border:1px solid var(--border);border-radius:var(--radius-md);background:transparent;color:var(--muted-foreground);cursor:pointer;
+    transition:background-color .15s ease,color .15s ease,border-color .15s ease;
+  }
+  .iconbtn:hover{color:var(--destructive);border-color:color-mix(in oklch,var(--destructive) 45%,transparent);background:color-mix(in oklch,var(--destructive) 8%,transparent);}
+
+  /* sticky action bar */
+  .actionbar{
+    position:fixed;left:0;right:0;bottom:0;z-index:30;
+    border-top:1px solid var(--border);
+    background:color-mix(in oklch,var(--background) 86%,transparent);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  }
+  .actionbar__in{max-width:680px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:12px;}
+
+  /* note callout */
+  .note{
+    display:flex;gap:11px;align-items:flex-start;padding:13px 15px;border-radius:var(--radius-lg);
+    background:color-mix(in oklch,var(--primary) 9%,transparent);
+    border:1px solid color-mix(in oklch,var(--primary) 22%,transparent);
+    font-size:13.5px;line-height:1.5;
+  }
+  .note svg{color:var(--primary);flex-shrink:0;margin-top:1px;}
+
+  /* modal */
+  .overlay{
+    position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:24px;
+    background:color-mix(in oklch,black 55%,transparent);
+    backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+    animation:fade .18s ease;
+  }
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .modal{
+    width:100%;max-width:420px;background:var(--popover);color:var(--popover-foreground);
+    border:1px solid var(--border);border-radius:var(--radius-xl);box-shadow:0 24px 60px -12px rgba(0,0,0,.6);
+    padding:30px 28px;animation:pop .22s cubic-bezier(.2,.7,.3,1);
+  }
+  @keyframes pop{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
+
+  .spinner{
+    width:46px;height:46px;border-radius:50%;
+    border:3px solid color-mix(in oklch,var(--primary) 22%,transparent);
+    border-top-color:var(--primary);animation:spin .8s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .steps{display:flex;flex-direction:column;gap:0;margin:6px 0 0;}
+  .step{display:flex;gap:12px;align-items:flex-start;padding:9px 0;}
+  .step__dot{
+    width:24px;height:24px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+    border:1.5px solid var(--border);font-family:var(--font-mono);font-size:11px;color:var(--muted-foreground);
+    transition:all .25s ease;
+  }
+  .step--active .step__dot{border-color:var(--primary);background:color-mix(in oklch,var(--primary) 16%,transparent);color:var(--primary);}
+  .step--done .step__dot{border-color:var(--chart-1);background:color-mix(in oklch,var(--chart-1) 22%,transparent);color:var(--chart-1);}
+  .step__txt{font-size:13.5px;line-height:1.45;padding-top:2px;color:var(--muted-foreground);transition:color .25s ease;}
+  .step--active .step__txt,.step--done .step__txt{color:var(--foreground);}
+
+  .check{
+    width:60px;height:60px;border-radius:var(--radius-xl);display:flex;align-items:center;justify-content:center;
+    background:color-mix(in oklch,var(--chart-1) 24%,transparent);color:var(--chart-1);
+    animation:pop .3s cubic-bezier(.2,.7,.3,1);
+  }
+  .ring{
+    --p:0;
+    width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    background:conic-gradient(var(--primary) calc(var(--p)*1%), color-mix(in oklch,var(--muted) 80%,transparent) 0);
+    transition:background .95s linear;
+  }
+  .ring__in{
+    width:64px;height:64px;border-radius:50%;background:var(--popover);display:flex;align-items:center;justify-content:center;
+    font-family:var(--font-mono);font-size:24px;font-weight:600;
+  }
+
+  @media(max-width:540px){
+    .bank__v{font-size:13.5px;}
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" data-presets="react" src="tweaks-panel.jsx"></script>
+<script type="text/babel" data-presets="react">
+{
+  const NS = window.NumeraloDesignSystem_ea9c8f;
+  const { Card, CardHeader, CardTitle, CardContent, Button, Badge, RaffleNumber } = NS;
+  const { useTweaks, TweaksPanel, TweakSection, TweakSlider, TweakToggle, TweakRadio } = window;
+
+  const fmt = (n) => new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS" }).format(n);
+
+  // —— Data carried over from the number picker ——
+  const RAFFLE = { title: "iPhone 15 Pro · 256GB", price: 500 };
+  const SELECTED = [5, 14, 27];
+
+  const BANK = [
+    { k: "Titular", v: "Martín Gómez", icon: "user" },
+    { k: "Alias", v: "numeralo.iphone.rifa", icon: "at-sign", copy: true, hero: true },
+    { k: "CBU", v: "0000003100012345678901", icon: "landmark", copy: true },
+    { k: "CUIT", v: "20-34567890-1", icon: "id-card", copy: true },
+    { k: "Banco", v: "Mercado Pago", icon: "building-2" },
+  ];
+
+  const Lucide = ({ name, size = 16, color, style }) => {
+    const ref = React.useRef(null);
+    React.useEffect(() => {
+      if (ref.current && window.lucide) {
+        ref.current.innerHTML = "";
+        const el = document.createElement("i");
+        el.setAttribute("data-lucide", name);
+        ref.current.appendChild(el);
+        window.lucide.createIcons({ attrs: { width: size, height: size }, nameAttr: "data-lucide" });
+      }
+    });
+    return <span ref={ref} style={{ display: "inline-flex", color, ...style }} />;
+  };
+
+  const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+    "bankFirst": "alias",
+    "showReassurance": true,
+    "dashedDrop": true,
+    "processSecs": 2.6,
+    "countdownSecs": 6
+  }/*EDITMODE-END*/;
+
+  // —— Bank detail row ——
+  function BankRows({ order }) {
+    const [copied, setCopied] = React.useState(null);
+    const rows = React.useMemo(() => {
+      const r = [...BANK];
+      if (order === "cbu") {
+        r.sort((a, b) => (a.k === "CBU" ? -1 : b.k === "CBU" ? 1 : 0));
+      } else {
+        r.sort((a, b) => (a.k === "Alias" ? -1 : b.k === "Alias" ? 1 : 0));
+      }
+      return r;
+    }, [order]);
+    const doCopy = (row) => {
+      navigator.clipboard && navigator.clipboard.writeText(row.v).catch(() => {});
+      setCopied(row.k);
+      setTimeout(() => setCopied((c) => (c === row.k ? null : c)), 1600);
+    };
+    return (
+      <div className="bank">
+        {rows.map((row) => (
+          <div className="bank__row" key={row.k}>
+            <div className="row" style={{ gap: 11, minWidth: 0 }}>
+              <Lucide name={row.icon} size={16} color="var(--primary)" />
+              <div className="stack" style={{ gap: 2, minWidth: 0 }}>
+                <span className="bank__k">{row.k}</span>
+                <span className={"bank__v" + (row.copy ? " mono" : "")} style={{ textAlign: "left", fontSize: row.hero ? 16 : undefined, fontWeight: row.hero ? 600 : undefined }}>{row.v}</span>
+              </div>
+            </div>
+            {row.copy && (
+              <button className={"copybtn" + (copied === row.k ? " copybtn--done" : "")} onClick={() => doCopy(row)}>
+                <Lucide name={copied === row.k ? "check" : "copy"} size={14} />
+                {copied === row.k ? "Copiado" : "Copiar"}
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  // —— Dropzone ——
+  function Dropzone({ file, onFile, onClear, dashed }) {
+    const inputRef = React.useRef(null);
+    const [over, setOver] = React.useState(false);
+    const handle = (f) => {
+      if (!f) return;
+      const url = f.type && f.type.startsWith("image/") ? URL.createObjectURL(f) : null;
+      onFile({ name: f.name, size: f.size, url });
+    };
+    if (file) {
+      return (
+        <div className="file">
+          {file.url
+            ? <img className="file__thumb" src={file.url} alt="comprobante" />
+            : <span className="file__thumb" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}><Lucide name="file-text" size={24} color="var(--muted-foreground)" /></span>}
+          <div className="stack" style={{ gap: 3, flex: 1, minWidth: 0 }}>
+            <span style={{ fontSize: 14, fontWeight: 500, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{file.name}</span>
+            <span className="muted" style={{ fontSize: 12.5 }}>
+              {file.size ? (file.size / 1024).toFixed(0) + " KB · " : ""}Listo para enviar
+            </span>
+          </div>
+          <span style={{ color: "var(--chart-1)", display: "inline-flex" }}><Lucide name="circle-check-big" size={18} /></span>
+          <button className="iconbtn" onClick={onClear} aria-label="Quitar"><Lucide name="trash-2" size={16} /></button>
+        </div>
+      );
+    }
+    return (
+      <div
+        className={"drop" + (over ? " drop--over" : "")}
+        style={dashed ? null : { borderStyle: "solid" }}
+        onClick={() => inputRef.current && inputRef.current.click()}
+        onDragOver={(e) => { e.preventDefault(); setOver(true); }}
+        onDragLeave={() => setOver(false)}
+        onDrop={(e) => { e.preventDefault(); setOver(false); handle(e.dataTransfer.files[0]); }}
+      >
+        <span className="drop__ico"><Lucide name="upload-cloud" size={24} /></span>
+        <div className="stack" style={{ gap: 4 }}>
+          <span style={{ fontSize: 15, fontWeight: 500 }}>Arrastrá tu comprobante acá</span>
+          <span className="muted" style={{ fontSize: 13 }}>o <span style={{ color: "var(--primary)", fontWeight: 500 }}>elegí un archivo</span> · JPG, PNG o PDF</span>
+        </div>
+        <input ref={inputRef} type="file" accept="image/*,application/pdf" onChange={(e) => handle(e.target.files[0])} />
+      </div>
+    );
+  }
+
+  // —— Processing / success modal ——
+  const PROC_STEPS = [
+    "Recibimos tu comprobante de transferencia.",
+    "El creador de la rifa verifica el pago.",
+    "Te confirmamos tus números por email.",
+  ];
+
+  function ProcessingModal({ onClose, processSecs, countdownSecs }) {
+    const [phase, setPhase] = React.useState("processing"); // processing | done
+    const [stepIdx, setStepIdx] = React.useState(0);
+    const [count, setCount] = React.useState(countdownSecs);
+
+    React.useEffect(() => {
+      const per = (processSecs * 1000) / PROC_STEPS.length;
+      const timers = PROC_STEPS.map((_, i) => setTimeout(() => setStepIdx(i + 1), per * (i + 1)));
+      const finish = setTimeout(() => setPhase("done"), processSecs * 1000 + 150);
+      return () => { timers.forEach(clearTimeout); clearTimeout(finish); };
+    }, [processSecs]);
+
+    React.useEffect(() => {
+      if (phase !== "done") return;
+      if (count <= 0) { window.location.reload(); return; }
+      const t = setTimeout(() => setCount((c) => c - 1), 1000);
+      return () => clearTimeout(t);
+    }, [phase, count]);
+
+    const pct = ((countdownSecs - count) / countdownSecs) * 100;
+
+    return (
+      <div className="overlay" onClick={(e) => { if (e.target === e.currentTarget && phase === "done") onClose(); }}>
+        <div className="modal">
+          {phase === "processing" ? (
+            <div className="stack" style={{ alignItems: "center", gap: 18, textAlign: "center" }}>
+              <div className="spinner" />
+              <div className="stack" style={{ gap: 5 }}>
+                <h3 style={{ margin: 0, fontSize: 19, fontWeight: 600 }}>Procesando tu comprobante</h3>
+                <p className="muted" style={{ margin: 0, fontSize: 13.5 }}>No cierres esta ventana, tardamos unos segundos.</p>
+              </div>
+              <div className="steps" style={{ width: "100%", textAlign: "left" }}>
+                {PROC_STEPS.map((s, i) => (
+                  <div key={i} className={"step " + (i < stepIdx ? "step--done" : i === stepIdx ? "step--active" : "")}>
+                    <span className="step__dot">{i < stepIdx ? <Lucide name="check" size={13} /> : i + 1}</span>
+                    <span className="step__txt">{s}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="stack" style={{ alignItems: "center", gap: 16, textAlign: "center" }}>
+              <span className="check"><Lucide name="circle-check-big" size={32} /></span>
+              <div className="stack" style={{ gap: 6 }}>
+                <h3 style={{ margin: 0, fontSize: 21, fontWeight: 600 }}>¡Comprobante enviado!</h3>
+                <p className="muted" style={{ margin: 0, fontSize: 14, lineHeight: 1.5, maxWidth: 320 }}>
+                  Tus números quedaron reservados. Cuando el creador confirme la transferencia, te avisamos por email.
+                </p>
+              </div>
+              <div className="row" style={{ gap: 14, marginTop: 4 }}>
+                <div className="ring" style={{ "--p": pct }}>
+                  <span className="ring__in">{count}</span>
+                </div>
+                <div className="stack" style={{ gap: 2, textAlign: "left" }}>
+                  <span style={{ fontSize: 14, fontWeight: 500 }}>Volvés al inicio</span>
+                  <span className="muted" style={{ fontSize: 13 }}>en {count} segundo{count === 1 ? "" : "s"}…</span>
+                </div>
+              </div>
+              <Button block onClick={() => window.location.reload()} style={{ width: "100%", marginTop: 2 }}>
+                Volver al inicio ahora
+              </Button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  function Page() {
+    const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+    const [file, setFile] = React.useState(null);
+    const [open, setOpen] = React.useState(false);
+    const total = SELECTED.length * RAFFLE.price;
+
+    return (
+      <React.Fragment>
+        <header className="nav">
+          <div className="nav__in">
+            <div className="wordmark"><img src="assets/logo-mark.png" alt="" />Numeralo</div>
+            <span className="muted" style={{ marginLeft: "auto", fontSize: 13, display: "inline-flex", alignItems: "center", gap: 6 }}>
+              <Lucide name="lock" size={13} /> Pago seguro
+            </span>
+          </div>
+        </header>
+
+        <main className="wrap">
+          <button className="backlink" onClick={() => window.history.length > 1 ? window.history.back() : null}>
+            <Lucide name="chevron-left" size={16} /> Volver a elegir números
+          </button>
+
+          <div className="stack" style={{ gap: 5, margin: "10px 0 22px" }}>
+            <h1 style={{ margin: 0, fontSize: 27, fontWeight: 700, letterSpacing: "-.02em" }}>Pagá por transferencia</h1>
+            <p className="muted" style={{ margin: 0, fontSize: 14.5 }}>
+              Transferí el monto exacto y subí el comprobante para reservar tus números.
+            </p>
+          </div>
+
+          <div className="stack" style={{ gap: 18 }}>
+
+            {/* Resumen + monto */}
+            <Card>
+              <CardHeader>
+                <CardTitle style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 15 }}>
+                  <Lucide name="shopping-bag" size={16} color="var(--primary)" /> {RAFFLE.title}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="stack" style={{ gap: 14 }}>
+                  <div className="row" style={{ justifyContent: "space-between", flexWrap: "wrap", gap: 14 }}>
+                    <div className="stack" style={{ gap: 8 }}>
+                      <span className="muted" style={{ fontSize: 13 }}>Tus números ({SELECTED.length})</span>
+                      <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                        {SELECTED.map((n) => <RaffleNumber key={n} number={n} state="selected" size="sm" />)}
+                      </div>
+                    </div>
+                    <div className="stack" style={{ gap: 3, alignItems: "flex-end" }}>
+                      <span className="muted" style={{ fontSize: 13 }}>Total a transferir</span>
+                      <span className="mono" style={{ fontSize: 30, fontWeight: 600, color: "var(--primary)", lineHeight: 1 }}>{fmt(total)}</span>
+                      <span className="muted mono" style={{ fontSize: 12.5 }}>{SELECTED.length} × {fmt(RAFFLE.price)}</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Datos para transferir */}
+            <Card>
+              <CardHeader>
+                <CardTitle style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 15 }}>
+                  <Lucide name="landmark" size={16} color="var(--primary)" /> Datos para la transferencia
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="stack" style={{ gap: 14 }}>
+                  <BankRows order={t.bankFirst} />
+                  {t.showReassurance && (
+                    <div className="note">
+                      <Lucide name="shield-check" size={17} />
+                      <span>El dinero se transfiere <strong>directamente a la cuenta del creador</strong>. Numeralo no recibe ni administra los pagos.</span>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Comprobante */}
+            <Card>
+              <CardHeader>
+                <CardTitle style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 15 }}>
+                  <Lucide name="receipt" size={16} color="var(--primary)" /> Subí tu comprobante
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Dropzone file={file} onFile={setFile} onClear={() => setFile(null)} dashed={t.dashedDrop} />
+              </CardContent>
+            </Card>
+          </div>
+        </main>
+
+        {/* sticky actions */}
+        <div className="actionbar">
+          <div className="actionbar__in">
+            <Button variant="outline" size="lg" onClick={() => window.history.back()} style={{ flex: "0 0 auto" }}>
+              <Lucide name="chevron-left" size={16} /> Volver
+            </Button>
+            <Button size="lg" disabled={!file} onClick={() => setOpen(true)} style={{ flex: 1 }}>
+              <Lucide name="send" size={16} /> Enviar comprobante
+            </Button>
+          </div>
+        </div>
+
+        {open && <ProcessingModal onClose={() => setOpen(false)} processSecs={t.processSecs} countdownSecs={t.countdownSecs} />}
+
+        {/* Tweaks */}
+        <TweaksPanel title="Tweaks">
+          <TweakSection label="Datos bancarios" />
+          <TweakRadio label="Mostrar primero" value={t.bankFirst} options={["alias", "cbu"]} onChange={(v) => setTweak("bankFirst", v)} />
+          <TweakToggle label="Nota “sin intermediarios”" value={t.showReassurance} onChange={(v) => setTweak("showReassurance", v)} />
+          <TweakSection label="Comprobante" />
+          <TweakToggle label="Zona de carga punteada" value={t.dashedDrop} onChange={(v) => setTweak("dashedDrop", v)} />
+          <TweakSection label="Confirmación" />
+          <TweakSlider label="Duración del proceso" value={t.processSecs} min={1} max={5} step={0.2} unit="s" onChange={(v) => setTweak("processSecs", v)} />
+          <TweakSlider label="Cuenta regresiva" value={t.countdownSecs} min={3} max={10} step={1} unit="s" onChange={(v) => setTweak("countdownSecs", v)} />
+        </TweaksPanel>
+      </React.Fragment>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById("root")).render(<Page />);
+}
+</script>
+</body>
+</html>

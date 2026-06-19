@@ -12,6 +12,7 @@ export interface UpdateRaffleDto {
   imagePublicId?: string;
   totalNumbers?: number;
   numberPrice?: number;
+  winnersCount?: number;
   hasQuantityDiscount?: boolean;
   drawMethod?: DrawMethod;
   drawTrigger?: DrawTrigger;

@@ -32,6 +32,7 @@ export async function POST(req: NextRequest) {
     const image = formData.get("image") as File | null;
     const totalNumbers = Number(formData.get("totalNumbers"));
     const numberPrice = Number(formData.get("numberPrice"));
+    const winnersCount = Number(formData.get("winnersCount")) || 1;
     const hasQuantityDiscount = formData.get("hasQuantityDiscount") === "true";
     const drawMethod = formData.get("drawMethod") as DrawMethod;
     const drawTrigger = formData.get("drawTrigger") as DrawTrigger;
@@ -62,6 +63,7 @@ export async function POST(req: NextRequest) {
       image: image || undefined,
       totalNumbers,
       numberPrice,
+      winnersCount,
       hasQuantityDiscount,
       drawMethod,
       drawTrigger,

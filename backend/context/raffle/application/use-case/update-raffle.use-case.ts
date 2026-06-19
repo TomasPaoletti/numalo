@@ -72,6 +72,9 @@ export class UpdateRaffleUseCase {
         totalNumbers: data.totalNumbers,
       }),
       ...(data.numberPrice !== undefined && { numberPrice: data.numberPrice }),
+      ...(data.winnersCount !== undefined && {
+        winnersCount: data.winnersCount,
+      }),
       ...(data.hasQuantityDiscount !== undefined && {
         hasQuantityDiscount: data.hasQuantityDiscount,
       }),
