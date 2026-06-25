@@ -40,6 +40,11 @@ export class PrismaCompanyRepository implements CompanyRepository {
         name: companyData.name,
         image: companyData.image,
         phone: companyData.phone,
+        titular: companyData.titular,
+        alias: companyData.alias,
+        cbu: companyData.cbu,
+        cuit: companyData.cuit,
+        banco: companyData.banco,
         users: {
           connect: {
             id: userId,
@@ -64,6 +69,11 @@ export class PrismaCompanyRepository implements CompanyRepository {
         ...(updateData.name && { name: updateData.name }),
         ...(updateData.image !== undefined && { image: updateData.image }),
         ...(updateData.phone !== undefined && { phone: updateData.phone }),
+        ...(updateData.titular !== undefined && { titular: updateData.titular }),
+        ...(updateData.alias !== undefined && { alias: updateData.alias }),
+        ...(updateData.cbu !== undefined && { cbu: updateData.cbu }),
+        ...(updateData.cuit !== undefined && { cuit: updateData.cuit }),
+        ...(updateData.banco !== undefined && { banco: updateData.banco }),
       },
       include: {
         users: true,

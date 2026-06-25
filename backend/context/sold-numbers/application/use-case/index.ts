@@ -3,3 +3,4 @@ export * from "./delete-reservation.use-case";
 export * from "./get-raffle-numbers.use-case";
 export * from "./get-reservation.use-case";
 export * from "./get-sold-numbers-with-payment.use-case";
+export * from "./get-pending-numbers-with-payment.use-case";

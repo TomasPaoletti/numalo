@@ -7,7 +7,6 @@ declare module "next-auth" {
       firstName: string;
       lastName: string;
       companyId: string | null;
-      mpConnected: boolean;
     } & DefaultSession["user"];
   }
 
@@ -16,7 +15,6 @@ declare module "next-auth" {
     firstName: string;
     lastName: string;
     companyId: string | null;
-    mpConnected: boolean;
   }
 }
 
@@ -26,6 +24,5 @@ declare module "next-auth/jwt" {
     firstName: string;
     lastName: string;
     companyId: string | null;
-    mpConnected: boolean;
   }
 }

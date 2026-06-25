@@ -27,11 +27,5 @@ export function useReservationTimer(reservedUntil: string) {
 
   const isExpired = timeLeft <= 0;
 
-  return {
-    timeLeft,
-    minutes,
-    seconds,
-    formatted,
-    isExpired,
-  };
+  return { timeLeft, minutes, seconds, formatted, isExpired };
 }

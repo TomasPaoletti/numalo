@@ -11,6 +11,7 @@ export interface SoldNumbersRepository {
   clearExpiredReservations(raffleId: string): Promise<void>;
   getUnavailableNumbers(raffleId: string, numbers: number[]): Promise<number[]>;
   getSoldNumbersWithPayment(raffleId: string): Promise<SoldNumbersEntity[]>;
+  getPendingNumbersWithPayment(raffleId: string): Promise<SoldNumbersEntity[]>;
   reserveNumbers(data: CreateReservationDto): Promise<void>;
   getReservedNumbersBySession(
     raffleId: string,

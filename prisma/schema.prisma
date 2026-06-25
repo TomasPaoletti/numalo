@@ -28,10 +28,11 @@ model Company {
   image String?
   phone String?
 
-  mpAccessToken    String?
-  mpRefreshToken   String?
-  mpTokenExpiresAt DateTime?
-  mpUserId         String?
+  titular String?
+  alias   String?
+  cbu     String?
+  cuit    String?
+  banco   String?
 
   canCreateFreeRaffle Boolean @default(false)
 
@@ -79,12 +80,6 @@ model Raffle {
   drawTrigger DrawTrigger
 
   status RaffleStatus @default(DRAFT)
-
-  titular String?
-  alias   String?
-  cbu     String?
-  cuit    String?
-  banco   String?
 
   companyId String
   company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
@@ -228,5 +223,6 @@ enum PaymentType {
 enum ReservationStatus {
   AVAILABLE
   RESERVED
+  RESERVED_WITH_COMPROBANT
   SOLD
 }

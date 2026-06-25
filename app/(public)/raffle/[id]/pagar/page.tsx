@@ -29,12 +29,16 @@ export default async function PagarPage({
       select: {
         id: true,
         title: true,
-        titular: true,
-        alias: true,
-        cbu: true,
-        cuit: true,
-        banco: true,
         numberPrice: true,
+        company: {
+          select: {
+            titular: true,
+            alias: true,
+            cbu: true,
+            cuit: true,
+            banco: true,
+          },
+        },
       },
     }),
     GetActiveReservation(id, session_id, true),
@@ -53,15 +57,16 @@ export default async function PagarPage({
     <PagarClient
       raffleId={id}
       bankInfo={{
-        titular: raffle.titular,
-        alias: raffle.alias,
-        cbu: raffle.cbu,
-        cuit: raffle.cuit,
-        banco: raffle.banco,
+        titular: raffle.company.titular,
+        alias: raffle.company.alias,
+        cbu: raffle.company.cbu,
+        cuit: raffle.company.cuit,
+        banco: raffle.company.banco,
       }}
       numbers={reservation.numbers}
       finalPrice={reservation.finalPrice}
       sessionId={session_id}
+      reservedUntil={String(reservation.reservedUntil)}
       defaultEmail={session?.user?.email ?? ""}
       defaultName={session?.user?.name ?? ""}
     />

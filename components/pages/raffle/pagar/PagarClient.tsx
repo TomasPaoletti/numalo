@@ -1,16 +1,26 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { ArrowLeft, Send, ShieldCheck } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowLeft, Clock, Send, ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 
-import { formatPrice } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
+
+import { useReservationTimer } from "@/components/pages/raffle/pagar/hooks/useReservationTimer";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 import BankDetailRows from "./BankDetailRows";
 import ComprobanteDropzone from "./ComprobanteDropzone";
@@ -36,6 +46,7 @@ interface PagarClientProps {
   numbers: number[];
   finalPrice: number;
   sessionId: string;
+  reservedUntil: string;
   defaultEmail?: string;
   defaultName?: string;
 }
@@ -46,14 +57,24 @@ export default function PagarClient({
   numbers,
   finalPrice,
   sessionId,
+  reservedUntil,
   defaultEmail = "",
   defaultName = "",
 }: PagarClientProps) {
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [expiredOpen, setExpiredOpen] = useState(false);
   const [pendingFormData, setPendingFormData] = useState<FormData | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
+
+  const { formatted, isExpired } = useReservationTimer(reservedUntil);
+
+  useEffect(() => {
+    if (isExpired) {
+      setExpiredOpen(true);
+    }
+  }, [isExpired]);
 
   const form = useForm<ContactForm>({
     defaultValues: {
@@ -77,6 +98,11 @@ export default function PagarClient({
     setPendingFormData(fd);
     setModalOpen(true);
   });
+
+  const handleExpiredClose = () => {
+    setExpiredOpen(false);
+    router.push(`/raffle/${raffleId}/sold-number`);
+  };
 
   return (
     <>
@@ -102,9 +128,22 @@ export default function PagarClient({
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">
-                Tus números ({numbers.length})
-              </CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-base">
+                  Tus números ({numbers.length})
+                </CardTitle>
+                <div
+                  className={cn(
+                    "flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium",
+                    isExpired
+                      ? "bg-destructive/10 text-destructive"
+                      : "bg-primary/10 text-primary"
+                  )}
+                >
+                  <Clock size={13} />
+                  <span>{isExpired ? "Expirado" : formatted}</span>
+                </div>
+              </div>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
               <div className="flex flex-wrap gap-1.5">
@@ -248,7 +287,7 @@ export default function PagarClient({
           </Button>
           <Button
             type="button"
-            disabled={!file}
+            disabled={!file || isExpired}
             onClick={handleSubmit}
           >
             <Send size={16} />
@@ -265,6 +304,22 @@ export default function PagarClient({
         }}
         formData={pendingFormData}
       />
+
+      {/* Expired reservation dialog */}
+      <Dialog open={expiredOpen} onOpenChange={() => {}}>
+        <DialogContent onInteractOutside={(e) => e.preventDefault()}>
+          <DialogHeader>
+            <DialogTitle>Reserva expirada</DialogTitle>
+            <DialogDescription>
+              El tiempo para completar el pago expiró y tus números fueron
+              liberados. Podés volver a seleccionarlos si están disponibles.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button onClick={handleExpiredClose}>Volver a la rifa</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

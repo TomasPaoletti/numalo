@@ -14,16 +14,7 @@ export class CreateCompanyUseCase {
     data: CreateCompanyDto,
     userId: string
   ): Promise<CompanyResponseDto> {
-    const {
-      name,
-      image,
-      phone,
-      mpAccessToken,
-      mpRefreshToken,
-      mpTokenExpiresAt,
-      mpUserId,
-      canCreateFreeRaffle,
-    } = data;
+    const { name, image, phone, titular, alias, cbu, cuit, banco, canCreateFreeRaffle } = data;
 
     if (!name) {
       throw new ValidationError("El nombre de la compañía es requerido");
@@ -34,10 +25,11 @@ export class CreateCompanyUseCase {
         name,
         image: image ?? null,
         phone: phone ?? null,
-        mpAccessToken: mpAccessToken ?? null,
-        mpRefreshToken: mpRefreshToken ?? null,
-        mpTokenExpiresAt: mpTokenExpiresAt ?? null,
-        mpUserId: mpUserId ?? null,
+        titular: titular ?? null,
+        alias: alias ?? null,
+        cbu: cbu ?? null,
+        cuit: cuit ?? null,
+        banco: banco ?? null,
         canCreateFreeRaffle: canCreateFreeRaffle ?? false,
       },
       userId

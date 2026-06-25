@@ -16,7 +16,6 @@ const AuthenticatedNavBar = () => {
   const { data } = useSession();
 
   const companyId = data?.user.companyId;
-  const connectMp = data?.user.mpConnected;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -73,7 +72,7 @@ const AuthenticatedNavBar = () => {
           </div>
 
           <div>
-            {companyId && connectMp ? (
+            {companyId ? (
               <Link href="/admin/create">
                 <Button size="sm">Crear rifa</Button>
               </Link>

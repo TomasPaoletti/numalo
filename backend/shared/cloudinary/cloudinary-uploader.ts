@@ -37,6 +37,10 @@ export async function uploadImage(
   });
 }
 
+export async function deleteAsset(publicId: string): Promise<void> {
+  await cloudinary.uploader.destroy(publicId, { resource_type: "raw" });
+}
+
 export async function uploadDocument(
   buffer: Buffer,
   options: UploadImageOptions

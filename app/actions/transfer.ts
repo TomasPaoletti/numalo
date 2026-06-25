@@ -3,14 +3,14 @@
 import React from "react";
 import { getServerSession } from "next-auth";
 
-import { PaymentProvider, PaymentType } from "@/app/generated/prisma/enums";
+import { PaymentProvider, PaymentType, RaffleStatus, ReservationStatus } from "@/app/generated/prisma/enums";
 
 import { authOptions } from "@/lib/auth";
 import { sendEmail } from "@/lib/email/send-email";
 import TransferReceivedEmail from "@/lib/email/templates/transfer-received.email";
 import prisma from "@/lib/prisma";
 
-import { uploadDocument } from "@/backend/shared/cloudinary/cloudinary-uploader";
+import { deleteAsset, uploadDocument } from "@/backend/shared/cloudinary/cloudinary-uploader";
 
 export async function submitComprobante(formData: FormData): Promise<{
   ok: boolean;
@@ -42,19 +42,19 @@ export async function submitComprobante(formData: FormData): Promise<{
     }
 
     const raffle = await prisma.raffle.findUnique({
-      where: { id: raffleId },
+      where: { id: raffleId, status: RaffleStatus.ACTIVE },
       select: { id: true, title: true, numberPrice: true },
     });
 
     if (!raffle) {
-      return { ok: false, error: "Rifa no encontrada." };
+      return { ok: false, error: "La rifa no está disponible." };
     }
 
     const reservedNumbers = await prisma.soldNumber.findMany({
       where: {
         raffleId,
         reservedBy: sessionId,
-        status: "RESERVED",
+        status: ReservationStatus.RESERVED,
       },
       select: { id: true, number: true },
     });
@@ -63,44 +63,53 @@ export async function submitComprobante(formData: FormData): Promise<{
       return { ok: false, error: "No hay números reservados para esta sesión." };
     }
 
+    // Upload comprobante organized by the first sold number's ID
+    const folderSoldNumberId = reservedNumbers[0].id;
     const buffer = Buffer.from(await file.arrayBuffer());
     const { url: comprobanteUrl, publicId: comprobantePublicId } =
-      await uploadDocument(buffer, { folder: "numeralo/comprobantes" });
+      await uploadDocument(buffer, {
+        folder: `numeralo/comprobantes/${folderSoldNumberId}`,
+        publicId: "comprobante",
+      });
 
     const totalAmount = Number(raffle.numberPrice) * reservedNumbers.length;
-    const sevenDaysFromNow = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
-    await prisma.$transaction(async (tx) => {
-      const newPayment = await tx.payment.create({
-        data: {
-          amount: totalAmount,
-          currency: "ARS",
-          status: "PENDING",
-          provider: PaymentProvider.MANUAL,
-          paymentType: PaymentType.NUMBER_PURCHASE,
-          raffleId,
-          payerName: resolvedName,
-          payerEmail: resolvedEmail,
-          payerPhone: payerPhone || null,
-          comprobanteUrl,
-          comprobantePublicId,
-        },
+    try {
+      await prisma.$transaction(async (tx) => {
+        const newPayment = await tx.payment.create({
+          data: {
+            amount: totalAmount,
+            currency: "ARS",
+            status: "PENDING",
+            provider: PaymentProvider.MANUAL,
+            paymentType: PaymentType.NUMBER_PURCHASE,
+            raffleId,
+            payerName: resolvedName,
+            payerEmail: resolvedEmail,
+            payerPhone: payerPhone || null,
+            comprobanteUrl,
+            comprobantePublicId,
+          },
+        });
+
+        await tx.soldNumber.updateMany({
+          where: { id: { in: reservedNumbers.map((n) => n.id) } },
+          data: {
+            paymentId: newPayment.id,
+            status: ReservationStatus.RESERVED_WITH_COMPROBANT,
+            reservedUntil: null,
+          },
+        });
       });
-
-      await tx.soldNumber.updateMany({
-        where: { id: { in: reservedNumbers.map((n) => n.id) } },
-        data: {
-          paymentId: newPayment.id,
-          reservedUntil: sevenDaysFromNow,
-        },
-      });
-
-    });
+    } catch (txError) {
+      await deleteAsset(comprobantePublicId).catch(() => {});
+      throw txError;
+    }
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "";
     const raffleUrl = `${appUrl}/raffle/${raffleId}`;
 
-    await sendEmail({
+    sendEmail({
       to: resolvedEmail,
       subject: `Comprobante recibido para "${raffle.title}"`,
       template: React.createElement(TransferReceivedEmail, {
@@ -110,7 +119,7 @@ export async function submitComprobante(formData: FormData): Promise<{
         totalAmount,
         raffleUrl,
       }),
-    });
+    }).catch((err) => console.error("[submitComprobante] Error enviando email:", err));
 
     return { ok: true };
   } catch (error) {

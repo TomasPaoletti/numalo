@@ -93,11 +93,6 @@ export class CreateRaffleUseCase {
       publishedAt: null,
       finishedAt: null,
       companyId,
-      titular: null,
-      alias: null,
-      cbu: null,
-      cuit: null,
-      banco: null,
     };
 
     const raffle = await this.raffleRepository.create(raffleData);

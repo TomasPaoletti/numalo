@@ -23,11 +23,6 @@ export interface RaffleEntity {
   status: RaffleStatus;
   quantityDiscounts?: QuantityDiscountEntity[];
   winners?: RaffleWinnerEntity[];
-  titular: string | null;
-  alias: string | null;
-  cbu: string | null;
-  cuit: string | null;
-  banco: string | null;
   companyId: string;
   createdAt: Date;
   updatedAt: Date;
