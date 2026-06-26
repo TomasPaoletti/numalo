@@ -72,18 +72,17 @@ export default function ComprobanteModal({
     if (phase !== "done") return;
 
     const timer = setInterval(() => {
-      setCountdown((c) => {
-        if (c <= 1) {
-          clearInterval(timer);
-          router.push("/");
-          return 0;
-        }
-        return c - 1;
-      });
+      setCountdown((c) => (c <= 1 ? 0 : c - 1));
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [phase, router]);
+  }, [phase]);
+
+  useEffect(() => {
+    if (phase === "done" && countdown === 0) {
+      router.push("/");
+    }
+  }, [countdown, phase, router]);
 
   const handleClose = () => {
     if (phase === "processing") return;

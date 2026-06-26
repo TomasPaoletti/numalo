@@ -1,5 +1,6 @@
 import React from "react";
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 
 import { PaymentStatus, ReservationStatus } from "@/app/generated/prisma/enums";
 
@@ -110,15 +111,8 @@ export async function POST(
       }
     } else {
       await prisma.$transaction([
-        prisma.soldNumber.updateMany({
+        prisma.soldNumber.deleteMany({
           where: { id: { in: soldNumberIds } },
-          data: {
-            status: ReservationStatus.AVAILABLE,
-            paymentId: null,
-            reservedBy: null,
-            reservedAt: null,
-            reservedUntil: null,
-          },
         }),
         prisma.payment.update({
           where: { id: paymentId },
@@ -140,6 +134,7 @@ export async function POST(
       }
     }
 
+    revalidatePath(`/admin/raffle/${raffleId}/stats`);
     return NextResponse.json({ ok: true });
   } catch (error) {
     if (error instanceof CustomError) {

@@ -51,7 +51,7 @@ export async function uploadDocument(
         {
           folder: options.folder,
           public_id: options.publicId,
-          resource_type: "auto",
+          resource_type: "raw",
         },
         (error, result) => {
           if (error || !result) {

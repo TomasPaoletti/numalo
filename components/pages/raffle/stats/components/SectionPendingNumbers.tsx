@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { CheckCircle, ExternalLink, XCircle } from "lucide-react";
 import { toast } from "sonner";
@@ -8,6 +9,15 @@ import { toast } from "sonner";
 import { SoldNumbersEntity } from "@/backend/context/sold-numbers/domain/entities/sold-numbers.entity";
 
 import { apiClient } from "@/lib/api";
+
+const PdfViewer = dynamic(() => import("@/components/ui/pdf-viewer"), {
+  ssr: false,
+  loading: () => (
+    <div className="bg-muted flex h-40 items-center justify-center text-sm text-muted-foreground">
+      Cargando PDF…
+    </div>
+  ),
+});
 
 import { Button } from "@/components/ui/button";
 import {
@@ -179,7 +189,7 @@ export default function SectionPendingNumbers({
 
       {/* Review modal */}
       <Dialog open={!!selected} onOpenChange={() => setSelected(null)}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-xl">
           <DialogHeader>
             <DialogTitle>Revisar comprobante</DialogTitle>
             <DialogDescription>
@@ -211,21 +221,32 @@ export default function SectionPendingNumbers({
                 </p>
               </div>
 
+              <div className="border-border overflow-hidden rounded-lg border">
+                {/\.(jpg|jpeg|png|gif|webp)(\?|$)/i.test(selected.comprobanteUrl) ? (
+                  <img
+                    src={selected.comprobanteUrl}
+                    alt="Comprobante"
+                    className="max-h-80 w-full object-contain"
+                  />
+                ) : (
+                  <PdfViewer
+                    url={`/api/proxy/comprobante?url=${encodeURIComponent(selected.comprobanteUrl)}`}
+                  />
+                )}
+              </div>
               <a
-                href={selected.comprobanteUrl}
+                href={`/api/proxy/comprobante?url=${encodeURIComponent(selected.comprobanteUrl)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="border-border bg-muted/40 hover:bg-muted flex items-center justify-center gap-2 rounded-lg border py-10 transition-colors"
+                className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-xs transition-colors"
               >
-                <ExternalLink size={16} className="text-primary" />
-                <span className="text-primary text-sm font-medium">
-                  Abrir comprobante
-                </span>
+                <ExternalLink size={12} />
+                Abrir en nueva pestaña
               </a>
             </div>
           )}
 
-          <DialogFooter className="gap-2 sm:gap-0">
+          <DialogFooter className="gap-1">
             <Button
               variant="destructive"
               disabled={isPending}
