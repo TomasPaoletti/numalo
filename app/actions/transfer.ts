@@ -10,7 +10,7 @@ import { sendEmail } from "@/lib/email/send-email";
 import TransferReceivedEmail from "@/lib/email/templates/transfer-received.email";
 import prisma from "@/lib/prisma";
 
-import { deleteAsset, uploadDocument } from "@/backend/shared/cloudinary/cloudinary-uploader";
+import { deleteAsset, uploadDocument, uploadImage } from "@/backend/shared/cloudinary/cloudinary-uploader";
 
 export async function submitComprobante(formData: FormData): Promise<{
   ok: boolean;
@@ -63,14 +63,16 @@ export async function submitComprobante(formData: FormData): Promise<{
       return { ok: false, error: "No hay números reservados para esta sesión." };
     }
 
-    // Upload comprobante organized by the first sold number's ID
     const folderSoldNumberId = reservedNumbers[0].id;
     const buffer = Buffer.from(await file.arrayBuffer());
-    const { url: comprobanteUrl, publicId: comprobantePublicId } =
-      await uploadDocument(buffer, {
-        folder: `numeralo/comprobantes/${folderSoldNumberId}`,
-        publicId: "comprobante",
-      });
+    const uploadOptions = {
+      folder: `numeralo/comprobantes/${folderSoldNumberId}`,
+      publicId: "comprobante",
+    };
+    const isImage = file.type.startsWith("image/");
+    const { url: comprobanteUrl, publicId: comprobantePublicId } = isImage
+      ? await uploadImage(buffer, uploadOptions)
+      : await uploadDocument(buffer, uploadOptions);
 
     const totalAmount = Number(raffle.numberPrice) * reservedNumbers.length;
 
@@ -102,7 +104,7 @@ export async function submitComprobante(formData: FormData): Promise<{
         });
       });
     } catch (txError) {
-      await deleteAsset(comprobantePublicId).catch(() => {});
+      await deleteAsset(comprobantePublicId, isImage ? "image" : "raw").catch(() => {});
       throw txError;
     }
 

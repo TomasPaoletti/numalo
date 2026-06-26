@@ -222,7 +222,7 @@ export default function SectionPendingNumbers({
               </div>
 
               <div className="border-border overflow-hidden rounded-lg border">
-                {/\.(jpg|jpeg|png|gif|webp)(\?|$)/i.test(selected.comprobanteUrl) ? (
+                {selected.comprobanteUrl.includes("/image/upload/") ? (
                   <img
                     src={selected.comprobanteUrl}
                     alt="Comprobante"
