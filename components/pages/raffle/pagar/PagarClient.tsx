@@ -106,7 +106,7 @@ export default function PagarClient({
 
   return (
     <>
-      <div className="mx-auto max-w-[680px] px-6 pt-8 pb-32">
+      <div className="w-full p-6 pb-32 md:py-12 md:pb-32">
         <div className="flex flex-col gap-[18px]">
           <button
             onClick={() => router.back()}
@@ -279,8 +279,8 @@ export default function PagarClient({
         </div>
       </div>
 
-      <div className="border-border bg-background/86 fixed right-0 bottom-0 left-0 border-t backdrop-blur-[10px]">
-        <div className="mx-auto flex max-w-[680px] items-center justify-between gap-4 px-6 py-3">
+      <div className="bg-background fixed right-0 bottom-0 left-0 border-t px-4 py-2">
+        <div className="mx-auto flex items-center justify-between">
           <Button variant="outline" onClick={() => router.back()}>
             <ArrowLeft size={16} />
             Volver
