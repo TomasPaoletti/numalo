@@ -1,25 +1,13 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { CheckCircle, ExternalLink, XCircle } from "lucide-react";
 import { toast } from "sonner";
 
 import { SoldNumbersEntity } from "@/backend/context/sold-numbers/domain/entities/sold-numbers.entity";
 
 import { apiClient } from "@/lib/api";
 
-const PdfViewer = dynamic(() => import("@/components/ui/pdf-viewer"), {
-  ssr: false,
-  loading: () => (
-    <div className="bg-muted flex h-40 items-center justify-center text-sm text-muted-foreground">
-      Cargando PDF…
-    </div>
-  ),
-});
-
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -27,14 +15,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import {
   Table,
   TableBody,
@@ -44,20 +24,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import ComprobantePreviewDialog, {
+  ComprobantePaymentData,
+} from "./ComprobantePreviewDialog";
+
 interface SectionPendingNumbersProps {
   raffleId: string;
   pendingNumbers: SoldNumbersEntity[];
 }
 
-type GroupedPayment = {
-  paymentId: string;
-  payerName: string;
-  payerEmail: string;
-  payerPhone: string;
-  numbers: number[];
-  comprobanteUrl: string;
-  totalAmount: number;
-};
+type GroupedPayment = ComprobantePaymentData & { paymentId: string };
 
 function groupByPayment(soldNumbers: SoldNumbersEntity[]): GroupedPayment[] {
   const map = new Map<string, GroupedPayment>();
@@ -187,84 +163,14 @@ export default function SectionPendingNumbers({
         </CardContent>
       </Card>
 
-      {/* Review modal */}
-      <Dialog open={!!selected} onOpenChange={() => setSelected(null)}>
-        <DialogContent className="max-w-xl">
-          <DialogHeader>
-            <DialogTitle>Revisar comprobante</DialogTitle>
-            <DialogDescription>
-              {selected && (
-                <>
-                  <strong>{selected.payerName}</strong> —{" "}
-                  {selected.numbers.map((n) => `#${n}`).join(", ")}
-                </>
-              )}
-            </DialogDescription>
-          </DialogHeader>
-
-          {selected && (
-            <div className="flex flex-col gap-4">
-              <div className="bg-muted flex flex-col gap-1 rounded-lg p-3 text-sm">
-                <p>
-                  <span className="text-muted-foreground">Email:</span>{" "}
-                  {selected.payerEmail}
-                </p>
-                {selected.payerPhone !== "—" && (
-                  <p>
-                    <span className="text-muted-foreground">Teléfono:</span>{" "}
-                    {selected.payerPhone}
-                  </p>
-                )}
-                <p>
-                  <span className="text-muted-foreground">Total:</span> $
-                  {Number(selected.totalAmount).toLocaleString("es-AR")} ARS
-                </p>
-              </div>
-
-              <div className="border-border overflow-hidden rounded-lg border">
-                {selected.comprobanteUrl.includes("/image/upload/") ? (
-                  <img
-                    src={selected.comprobanteUrl}
-                    alt="Comprobante"
-                    className="max-h-80 w-full object-contain"
-                  />
-                ) : (
-                  <PdfViewer
-                    url={`/api/proxy/comprobante?url=${encodeURIComponent(selected.comprobanteUrl)}`}
-                  />
-                )}
-              </div>
-              <a
-                href={`/api/proxy/comprobante?url=${encodeURIComponent(selected.comprobanteUrl)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-xs transition-colors"
-              >
-                <ExternalLink size={12} />
-                Abrir en nueva pestaña
-              </a>
-            </div>
-          )}
-
-          <DialogFooter className="gap-1">
-            <Button
-              variant="destructive"
-              disabled={isPending}
-              onClick={() => handleReview("deny")}
-            >
-              <XCircle size={16} />
-              Denegar
-            </Button>
-            <Button
-              disabled={isPending}
-              onClick={() => handleReview("approve")}
-            >
-              <CheckCircle size={16} />
-              Aprobar
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ComprobantePreviewDialog
+        open={!!selected}
+        onClose={() => setSelected(null)}
+        payment={selected}
+        onApprove={() => handleReview("approve")}
+        onDeny={() => handleReview("deny")}
+        isActionPending={isPending}
+      />
     </>
   );
 }
