@@ -23,10 +23,20 @@ export default async function AdminPage({
     throw error;
   });
 
+  const sorted = [...raffles].sort((a, b) => {
+    const aNeedsWinner =
+      a.status === RaffleStatus.FINISHED && !a.winners?.length;
+    const bNeedsWinner =
+      b.status === RaffleStatus.FINISHED && !b.winners?.length;
+    if (aNeedsWinner && !bNeedsWinner) return -1;
+    if (!aNeedsWinner && bNeedsWinner) return 1;
+    return 0;
+  });
+
   return (
     <div className="flex flex-col gap-6">
       <SectionFilterRaffles />
-      <SectionRafflesItems raffles={raffles} />
+      <SectionRafflesItems raffles={sorted} />
     </div>
   );
 }

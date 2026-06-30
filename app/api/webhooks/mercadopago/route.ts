@@ -1,16 +1,7 @@
 import { MercadoPagoConfig, Payment } from "mercadopago";
 import { NextRequest, NextResponse } from "next/server";
 
-import {
-  PaymentStatus,
-  PaymentType,
-  RaffleStatus,
-  ReservationStatus,
-} from "@/app/generated/prisma/enums";
-
-import { Prisma } from "@/app/generated/prisma/client";
-
-import prisma from "@/lib/prisma";
+import { PaymentStatus, PaymentType, RaffleStatus } from "@/app/generated/prisma/enums";
 
 import { UpdateRaffleUseCase } from "@/backend/context/raffle/application/use-case";
 import { PrismaRaffleRepository } from "@/backend/context/raffle/infrastructure/database/raffle.prisma-repository";
@@ -18,9 +9,7 @@ import { PrismaRaffleRepository } from "@/backend/context/raffle/infrastructure/
 import { UpsertPaymentUseCase } from "@/backend/context/payment/application/use-case";
 import { PrismaPaymentRepository } from "@/backend/context/payment/infrastructure/database/payment.prisma-repository";
 
-import { emailSendNumberPurchased } from "@/backend/shared/emails/email-send-number-purchased.email";
 import { emailSendRaffleActivate } from "@/backend/shared/emails/email-send-raffle-activate.email";
-import { RaffleVerifyComplete } from "@/backend/shared/raffle/raffle-verify-complete";
 
 import { CustomError } from "@/backend/shared/errors";
 
@@ -55,22 +44,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ received: true });
     }
 
-    const mpUserId = body.user_id || searchParams.get("user_id");
-
-    const company = mpUserId
-      ? await prisma.company.findFirst({
-          where: { mpUserId: String(mpUserId) },
-          include: {
-            users: {
-              select: { email: true },
-              take: 1,
-            },
-          },
-        })
-      : null;
-
-    const accessToken =
-      company?.mpAccessToken ?? process.env.MERCADOPAGO_ACCESS_TOKEN!;
+    const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN!;
 
     const client = new MercadoPagoConfig({ accessToken });
     const mpPayment = new Payment(client);
@@ -83,91 +57,6 @@ export async function POST(req: NextRequest) {
     }
 
     const status = mapStatus(paymentData.status);
-
-    // --- Flujo: compra de números ---
-    const numberPurchasePayment = await prisma.payment.findFirst({
-      where: {
-        id: externalReference,
-        paymentType: PaymentType.NUMBER_PURCHASE,
-      },
-    });
-
-    if (numberPurchasePayment) {
-      if (
-        numberPurchasePayment.status === PaymentStatus.APPROVED ||
-        numberPurchasePayment.status === PaymentStatus.REJECTED ||
-        numberPurchasePayment.status === PaymentStatus.CANCELLED
-      ) {
-        return NextResponse.json({ received: true });
-      }
-
-      let soldNumbersList: number[] = [];
-
-      await prisma.$transaction(async (tx) => {
-        await tx.payment.update({
-          where: { id: numberPurchasePayment.id },
-          data: {
-            status,
-            providerPaymentId: paymentData.id!.toString(),
-            providerMetadata: paymentData as unknown as Prisma.InputJsonValue,
-            paidAt: status === PaymentStatus.APPROVED ? new Date() : null,
-          },
-        });
-
-        if (status === PaymentStatus.APPROVED) {
-          const soldNumbers = await tx.soldNumber.findMany({
-            where: { paymentId: numberPurchasePayment.id },
-            select: { number: true },
-          });
-
-          soldNumbersList = soldNumbers.map((s) => s.number);
-
-          await tx.soldNumber.updateMany({
-            where: { paymentId: numberPurchasePayment.id },
-            data: {
-              status: ReservationStatus.SOLD,
-              reservedUntil: null,
-            },
-          });
-        }
-
-        if (
-          status === PaymentStatus.REJECTED ||
-          status === PaymentStatus.CANCELLED
-        ) {
-          await tx.soldNumber.updateMany({
-            where: { paymentId: numberPurchasePayment.id },
-            data: {
-              status: ReservationStatus.AVAILABLE,
-              paymentId: null,
-              reservedBy: null,
-              reservedAt: null,
-              reservedUntil: null,
-            },
-          });
-        }
-      });
-
-      if (status === PaymentStatus.APPROVED && company) {
-        await RaffleVerifyComplete(numberPurchasePayment.raffleId, company);
-      }
-
-      // Email al comprador solo si fue aprobado
-      if (
-        status === PaymentStatus.APPROVED &&
-        numberPurchasePayment.payerEmail
-      ) {
-        await emailSendNumberPurchased({
-          to: numberPurchasePayment.payerEmail,
-          payerName: numberPurchasePayment.payerName ?? "Participante",
-          raffleId: numberPurchasePayment.raffleId,
-          numbers: soldNumbersList,
-          totalAmount: Number(numberPurchasePayment.amount),
-        });
-      }
-
-      return NextResponse.json({ received: true });
-    }
 
     // --- Flujo: activación de rifa ---
     const raffleId = externalReference;

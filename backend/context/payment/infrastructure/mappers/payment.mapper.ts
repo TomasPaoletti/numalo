@@ -19,6 +19,8 @@ export function mapPaymentToDomainEntity(
     payerEmail: prismaPayment.payerEmail ?? undefined,
     payerPhone: prismaPayment.payerPhone ?? undefined,
     payerInstagram: prismaPayment.payerInstagram ?? undefined,
+    comprobanteUrl: prismaPayment.comprobanteUrl ?? null,
+    comprobantePublicId: prismaPayment.comprobantePublicId ?? null,
     paidAt: prismaPayment.paidAt ?? null,
     createdAt: prismaPayment.createdAt,
     updatedAt: prismaPayment.updatedAt,

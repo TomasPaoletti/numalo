@@ -17,7 +17,6 @@ import {
 const SectionEmptyStateAdmin = () => {
   const { data } = useSession();
   const companyId = data?.user.companyId;
-  const connectMp = data?.user.mpConnected;
   return (
     <Empty>
       <EmptyHeader>
@@ -31,7 +30,7 @@ const SectionEmptyStateAdmin = () => {
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
-        {companyId && connectMp ? (
+        {companyId ? (
           <Link href="/admin/create">
             <Button size="sm">Crear rifa</Button>
           </Link>

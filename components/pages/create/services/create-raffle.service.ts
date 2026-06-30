@@ -10,6 +10,7 @@ const CreateRaffle = async (data: CreateSchemaInput): Promise<RaffleEntity> => {
   formData.append("title", data.title);
   formData.append("totalNumbers", (data.totalNumbers as number).toString());
   formData.append("numberPrice", (data.numberPrice as number).toString());
+  formData.append("winnersCount", (data.winnersCount as number).toString());
   formData.append("hasQuantityDiscount", data.hasQuantityDiscount.toString());
   formData.append("drawMethod", data.drawMethod);
   formData.append("drawTrigger", data.drawTrigger);

@@ -1,3 +1,4 @@
+export * from "./assign-quiniela-winner.service";
 export * from "./delete-raffle.service";
 export * from "./get-raffle-by-id-public.service";
 export * from "./get-raffle-by-id.service";

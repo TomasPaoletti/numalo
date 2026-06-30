@@ -17,6 +17,8 @@ export interface PaymentEntity {
   payerEmail?: string;
   payerPhone?: string;
   payerInstagram?: string;
+  comprobanteUrl?: string | null;
+  comprobantePublicId?: string | null;
   providerMetadata?: unknown;
   paidAt?: Date | null;
   createdAt: Date;

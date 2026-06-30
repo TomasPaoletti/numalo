@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { EllipsisVerticalIcon, Trophy } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -20,21 +21,25 @@ import {
   ItemDescription,
   ItemTitle,
 } from "@/components/ui/item";
+import ComprobantePreviewDialog, {
+  ComprobantePaymentData,
+} from "@/components/pages/raffle/stats/components/ComprobantePreviewDialog";
 
 interface SoldNumbersCardsProps {
   soldNumbers: SoldNumbersEntity[];
-  winnerNumber: number | null;
+  winnerNumbers: number[];
 }
 
 const SoldNumbersCards = ({
   soldNumbers,
-  winnerNumber,
+  winnerNumbers,
 }: SoldNumbersCardsProps) => {
+  const [selected, setSelected] = useState<ComprobantePaymentData | null>(null);
+
   return (
     <section id="table-sold-numbers" className="flex flex-col gap-4 md:hidden">
       {soldNumbers.map((soldNumber) => {
-        const isWinner =
-          winnerNumber != null && soldNumber.number === winnerNumber;
+        const isWinner = winnerNumbers.includes(soldNumber.number);
 
         return (
           <Item key={soldNumber.id} variant={isWinner ? "muted" : "outline"}>
@@ -110,12 +115,34 @@ const SoldNumbersCards = ({
                       </a>
                     </DropdownMenuItem>
                   )}
+                  {soldNumber.payment?.comprobanteUrl && (
+                    <DropdownMenuItem
+                      onSelect={() =>
+                        setSelected({
+                          payerName: soldNumber.payment!.payerName ?? "—",
+                          payerEmail: soldNumber.payment!.payerEmail ?? "—",
+                          payerPhone: soldNumber.payment!.payerPhone,
+                          totalAmount: soldNumber.payment!.amount,
+                          comprobanteUrl: soldNumber.payment!.comprobanteUrl!,
+                          numbers: [soldNumber.number],
+                        })
+                      }
+                    >
+                      Ver comprobante
+                    </DropdownMenuItem>
+                  )}
                 </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenu>
           </Item>
         );
       })}
+
+      <ComprobantePreviewDialog
+        open={!!selected}
+        onClose={() => setSelected(null)}
+        payment={selected}
+      />
     </section>
   );
 };

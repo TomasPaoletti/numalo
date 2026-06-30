@@ -41,7 +41,7 @@ const SoldNumberFooter = ({ raffleId }: SoldNumberFooterProps) => {
 
       toast.success("Números reservados");
 
-      router.push(`/raffle/${raffleId}/checkout?session_id=${sessionId}`);
+      router.push(`/raffle/${raffleId}/pagar?session_id=${sessionId}`);
     } catch (error: any) {
       toast.dismiss();
       toast.error(error.apiError?.message || "Error al reservar números");

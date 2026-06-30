@@ -36,3 +36,37 @@ export async function uploadImage(
       .end(buffer);
   });
 }
+
+export async function deleteAsset(
+  publicId: string,
+  resourceType: "image" | "raw" = "raw"
+): Promise<void> {
+  await cloudinary.uploader.destroy(publicId, { resource_type: resourceType });
+}
+
+export async function uploadDocument(
+  buffer: Buffer,
+  options: UploadImageOptions
+): Promise<UploadedImage> {
+  return new Promise((resolve, reject) => {
+    cloudinary.uploader
+      .upload_stream(
+        {
+          folder: options.folder,
+          public_id: options.publicId,
+          resource_type: "raw",
+        },
+        (error, result) => {
+          if (error || !result) {
+            return reject(error ?? new Error("Cloudinary upload failed"));
+          }
+
+          resolve({
+            url: result.secure_url,
+            publicId: result.public_id,
+          });
+        }
+      )
+      .end(buffer);
+  });
+}

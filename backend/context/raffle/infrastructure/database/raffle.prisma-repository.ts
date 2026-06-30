@@ -12,6 +12,7 @@ export class PrismaRaffleRepository implements RaffleRepository {
       where: { id },
       include: {
         quantityDiscounts: true,
+        winners: true,
       },
     });
 
@@ -25,6 +26,7 @@ export class PrismaRaffleRepository implements RaffleRepository {
       where: { companyId },
       include: {
         quantityDiscounts: true,
+        winners: true,
       },
       orderBy: { createdAt: "desc" },
     });
@@ -40,6 +42,10 @@ export class PrismaRaffleRepository implements RaffleRepository {
       where: {
         companyId,
         status,
+      },
+      include: {
+        quantityDiscounts: true,
+        winners: true,
       },
       orderBy: { createdAt: "desc" },
     });
@@ -57,16 +63,12 @@ export class PrismaRaffleRepository implements RaffleRepository {
         image: raffleData.image,
         totalNumbers: raffleData.totalNumbers,
         numberPrice: raffleData.numberPrice,
+        winnersCount: raffleData.winnersCount,
         hasQuantityDiscount: raffleData.hasQuantityDiscount,
         drawMethod: raffleData.drawMethod,
         drawDate: raffleData.drawDate,
         drawTrigger: raffleData.drawTrigger,
         status: raffleData.status,
-        winnerNumber: raffleData.winnerNumber,
-        winnerName: raffleData.winnerName,
-        winnerPhone: raffleData.winnerPhone,
-        winnerEmail: raffleData.winnerEmail,
-        drawnAt: raffleData.drawnAt,
         publishedAt: raffleData.publishedAt,
         finishedAt: raffleData.finishedAt,
         companyId: raffleData.companyId,
@@ -95,6 +97,9 @@ export class PrismaRaffleRepository implements RaffleRepository {
           totalNumbers: updateData.totalNumbers,
         }),
         ...(updateData.numberPrice && { numberPrice: updateData.numberPrice }),
+        ...(updateData.winnersCount !== undefined && {
+          winnersCount: updateData.winnersCount,
+        }),
         ...(updateData.hasQuantityDiscount !== undefined && {
           hasQuantityDiscount: updateData.hasQuantityDiscount,
         }),
@@ -104,21 +109,6 @@ export class PrismaRaffleRepository implements RaffleRepository {
         }),
         ...(updateData.drawTrigger && { drawTrigger: updateData.drawTrigger }),
         ...(updateData.status && { status: updateData.status }),
-        ...(updateData.winnerNumber !== undefined && {
-          winnerNumber: updateData.winnerNumber,
-        }),
-        ...(updateData.winnerName !== undefined && {
-          winnerName: updateData.winnerName,
-        }),
-        ...(updateData.winnerPhone !== undefined && {
-          winnerPhone: updateData.winnerPhone,
-        }),
-        ...(updateData.winnerEmail !== undefined && {
-          winnerEmail: updateData.winnerEmail,
-        }),
-        ...(updateData.drawnAt !== undefined && {
-          drawnAt: updateData.drawnAt,
-        }),
         ...(updateData.publishedAt !== undefined && {
           publishedAt: updateData.publishedAt,
         }),

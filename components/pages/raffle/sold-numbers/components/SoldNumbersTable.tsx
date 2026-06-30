@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Trophy } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -13,16 +14,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import ComprobantePreviewDialog, {
+  ComprobantePaymentData,
+} from "@/components/pages/raffle/stats/components/ComprobantePreviewDialog";
 
 interface SoldNumbersTableProps {
   soldNumbers: SoldNumbersEntity[];
-  winnerNumber: number | null;
+  winnerNumbers: number[];
 }
 
 const SoldNumbersTable = ({
   soldNumbers,
-  winnerNumber,
+  winnerNumbers,
 }: SoldNumbersTableProps) => {
+  const [selected, setSelected] = useState<ComprobantePaymentData | null>(null);
+
   return (
     <section id="table-sold-numbers" className="hidden md:flex">
       <Table>
@@ -33,12 +39,12 @@ const SoldNumbersTable = ({
             <TableHead>Email</TableHead>
             <TableHead>Teléfono</TableHead>
             <TableHead>Instagram</TableHead>
+            <TableHead>Comprobante</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {soldNumbers.map((soldNumber) => {
-            const isWinner =
-              winnerNumber != null && soldNumber.number === winnerNumber;
+            const isWinner = winnerNumbers.includes(soldNumber.number);
 
             return (
               <TableRow
@@ -90,11 +96,38 @@ const SoldNumbersTable = ({
                     "—"
                   )}
                 </TableCell>
+                <TableCell>
+                  {soldNumber.payment?.comprobanteUrl ? (
+                    <button
+                      onClick={() =>
+                        setSelected({
+                          payerName: soldNumber.payment!.payerName ?? "—",
+                          payerEmail: soldNumber.payment!.payerEmail ?? "—",
+                          payerPhone: soldNumber.payment!.payerPhone,
+                          totalAmount: soldNumber.payment!.amount,
+                          comprobanteUrl: soldNumber.payment!.comprobanteUrl!,
+                          numbers: [soldNumber.number],
+                        })
+                      }
+                      className="text-primary text-sm underline-offset-4 hover:underline"
+                    >
+                      Ver comprobante
+                    </button>
+                  ) : (
+                    "—"
+                  )}
+                </TableCell>
               </TableRow>
             );
           })}
         </TableBody>
       </Table>
+
+      <ComprobantePreviewDialog
+        open={!!selected}
+        onClose={() => setSelected(null)}
+        payment={selected}
+      />
     </section>
   );
 };

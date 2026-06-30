@@ -20,4 +20,20 @@ const RAFFLES_OPTIONS = {
   [RaffleStatus.FINISHED]: [{ value: "stats", label: "Estadisticas" }],
 };
 
-export { RAFFLES_OPTIONS, STATUS_OPTIONS };
+const STATUS_BADGE: Record<RaffleStatus, { label: string; className: string }> =
+  {
+    [RaffleStatus.DRAFT]: {
+      label: "Borrador",
+      className: "bg-secondary text-secondary-foreground",
+    },
+    [RaffleStatus.ACTIVE]: {
+      label: "Activa",
+      className: "bg-primary text-primary-foreground",
+    },
+    [RaffleStatus.FINISHED]: {
+      label: "Finalizada",
+      className: "border-border text-muted-foreground",
+    },
+  };
+
+export { RAFFLES_OPTIONS, STATUS_BADGE, STATUS_OPTIONS };

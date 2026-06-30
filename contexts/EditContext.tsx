@@ -77,6 +77,7 @@ export function EditContextProvider({
       title: raffle.title,
       totalNumbers: raffle.totalNumbers,
       numberPrice: raffle.numberPrice,
+      winnersCount: raffle.winnersCount,
       description: raffle.description || "",
       hasQuantityDiscount: raffle.hasQuantityDiscount,
       quantity: raffle.quantityDiscounts?.[0]?.quantity,

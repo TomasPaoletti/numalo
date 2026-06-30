@@ -18,16 +18,7 @@ export class UpsertCompanyUseCase {
     userId: string,
     data: UpsertCompanyDto
   ): Promise<CompanyResponseDto> {
-    const {
-      name,
-      image,
-      phone,
-      mpAccessToken,
-      mpRefreshToken,
-      mpTokenExpiresAt,
-      mpUserId,
-      canCreateFreeRaffle,
-    } = data;
+    const { name, image, phone, titular, alias, cbu, cuit, banco, canCreateFreeRaffle } = data;
 
     if (!name) {
       throw new ValidationError("El nombre de la compañía es requerido");
@@ -39,24 +30,22 @@ export class UpsertCompanyUseCase {
       throw new ValidationError("Usuario no encontrado");
     }
 
-    let company;
-
     const dataCompany = {
       name,
       image: image ?? null,
       phone: phone ?? null,
-      mpAccessToken: mpAccessToken ?? null,
-      mpRefreshToken: mpRefreshToken ?? null,
-      mpTokenExpiresAt: mpTokenExpiresAt ?? null,
-      mpUserId: mpUserId ?? null,
+      titular: titular ?? null,
+      alias: alias ?? null,
+      cbu: cbu ?? null,
+      cuit: cuit ?? null,
+      banco: banco ?? null,
       canCreateFreeRaffle: canCreateFreeRaffle ?? false,
     };
 
+    let company;
+
     if (user.companyId) {
-      company = await this.companyRepository.update(
-        user.companyId,
-        dataCompany
-      );
+      company = await this.companyRepository.update(user.companyId, dataCompany);
     } else {
       company = await this.companyRepository.create(dataCompany, userId);
     }
@@ -66,11 +55,12 @@ export class UpsertCompanyUseCase {
       name: company.name,
       image: company.image,
       phone: company.phone,
-      mpAccessToken: company.mpAccessToken,
-      mpRefreshToken: company.mpRefreshToken,
-      mpTokenExpiresAt: company.mpTokenExpiresAt,
+      titular: company.titular,
+      alias: company.alias,
+      cbu: company.cbu,
+      cuit: company.cuit,
+      banco: company.banco,
       canCreateFreeRaffle: company.canCreateFreeRaffle,
-      mpUserId: company.mpUserId,
       createdAt: company.createdAt,
     };
   }

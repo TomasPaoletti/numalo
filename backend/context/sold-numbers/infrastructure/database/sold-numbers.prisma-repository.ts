@@ -64,7 +64,8 @@ export class PrismaSoldNumberRepository implements SoldNumbersRepository {
         raffleId,
         number: { in: numbers },
         OR: [
-          { status: "SOLD" },
+          { status: ReservationStatus.SOLD },
+          { status: ReservationStatus.RESERVED_WITH_COMPROBANT },
           {
             status: ReservationStatus.RESERVED,
             reservedUntil: { gt: new Date() },
@@ -121,6 +122,23 @@ export class PrismaSoldNumberRepository implements SoldNumbersRepository {
       include: {
         payment: true,
       },
+    });
+
+    return soldNumbers.map(mapSoldNumberToDomainEntity);
+  }
+
+  async getPendingNumbersWithPayment(
+    raffleId: string
+  ): Promise<SoldNumbersEntity[]> {
+    const soldNumbers = await prisma.soldNumber.findMany({
+      where: {
+        raffleId,
+        status: ReservationStatus.RESERVED_WITH_COMPROBANT,
+      },
+      include: {
+        payment: true,
+      },
+      orderBy: { reservedAt: "asc" },
     });
 
     return soldNumbers.map(mapSoldNumberToDomainEntity);

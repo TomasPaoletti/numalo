@@ -12,6 +12,7 @@ export interface UpdateRaffleDto {
   imagePublicId?: string;
   totalNumbers?: number;
   numberPrice?: number;
+  winnersCount?: number;
   hasQuantityDiscount?: boolean;
   drawMethod?: DrawMethod;
   drawTrigger?: DrawTrigger;
@@ -19,10 +20,5 @@ export interface UpdateRaffleDto {
   status?: RaffleStatus;
   publishedAt?: Date | null;
   finishedAt?: Date | null;
-  winnerNumber?: number;
-  winnerName?: string;
-  winnerPhone?: string;
-  winnerEmail?: string;
-  drawnAt?: Date;
   quantityDiscounts?: CreateQuantityDto[];
 }

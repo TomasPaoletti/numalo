@@ -72,6 +72,7 @@ export function CreateContextProvider({
       title: "",
       totalNumbers: undefined,
       numberPrice: undefined,
+      winnersCount: 1,
       description: "",
       hasQuantityDiscount: false,
       quantity: undefined,

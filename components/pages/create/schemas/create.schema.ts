@@ -13,6 +13,9 @@ export const createSchema = z
     numberPrice: z.coerce
       .number({ error: "Elige el precio por número" })
       .min(0.01, "El precio debe ser mayor a 0"),
+    winnersCount: z.coerce
+      .number({ error: "Elige la cantidad de ganadores" })
+      .min(1, "El mínimo es 1 ganador"),
     description: z.string().optional().nullable(),
     hasQuantityDiscount: z.boolean(),
     quantity: z.coerce

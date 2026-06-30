@@ -1,6 +1,11 @@
+import * as cheerio from "cheerio";
+
 const QUINIELA_URL = process.env.QUINIELA_URL ?? "";
 
+//TODO: REVIEW THIS
+
 export async function getQuinielaNumber(): Promise<number | null> {
+  console.log("Obteniendo número de quiniela...", QUINIELA_URL);
   try {
     const response = await fetch(QUINIELA_URL, {
       headers: {
@@ -19,14 +24,22 @@ export async function getQuinielaNumber(): Promise<number | null> {
 
     const html = await response.text();
 
-    const match = html.match(/Nocturna<\/a><br><a[^>]+>(\d{4})/);
+    const $ = cheerio.load(html);
 
-    if (!match) {
-      return null;
-    }
+    const nocturnaDiv = $("#MainContent_DivMatutina");
 
-    const number = parseInt(match[1], 10);
-    return number;
+    console.log(html);
+
+    return null;
+
+    // const match = html.match(/Nocturna<\/a><br><a[^>]+>(\d{4})/);
+
+    // if (!match) {
+    //   return null;
+    // }
+
+    // const number = parseInt(match[1], 10);
+    // return number;
   } catch (error) {
     console.error("[Quiniela] Error al obtener número:", error);
     return null;
