@@ -33,7 +33,7 @@ export class GetRaffleStatsByIdUseCase {
     }
 
     const soldNumbers =
-      await this.soldNumberRepository.findByRaffleId(raffleId);
+      await this.soldNumberRepository.getSoldNumbersWithPayment(raffleId);
 
     const numbersSold = soldNumbers.length;
 

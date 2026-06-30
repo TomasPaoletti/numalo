@@ -43,6 +43,10 @@ export class PrismaRaffleRepository implements RaffleRepository {
         companyId,
         status,
       },
+      include: {
+        quantityDiscounts: true,
+        winners: true,
+      },
       orderBy: { createdAt: "desc" },
     });
 

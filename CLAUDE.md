@@ -19,8 +19,10 @@ Required environment variables (copy `.env.example` → `.env`):
 - `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`
 - `MERCADOPAGO_ACCESS_TOKEN` / `MERCADOPAGO_PUBLIC_KEY` / `MERCADOPAGO_APP_NUMBER` / `MP_CLIENT_SECRET`
 - `CLOUDINARY_CLOUD_NAME` / `CLOUDINARY_API_KEY` / `CLOUDINARY_API_SECRET`
+- `RESEND_FROM_EMAIL` — sender address for transactional email via Resend
 - `NEXT_PUBLIC_APP_URL`
-- `QUINIELA_URL` — scraping target for the national lottery draw method
+- `CRON_SECRET` — shared secret validated by all cron routes via `x-cron-secret` header
+- `QUINIELA_URL` — scraping target for the national lottery draw method (scraper is incomplete — see TODO in `backend/shared/utils/get-quiniela-number.ts`)
 - `SEED_USER_EMAIL` / `SEED_USER_PASSWORD` — credentials for the seeded admin user
 
 ## Common commands
@@ -44,7 +46,7 @@ The `backend/` directory is organized by **bounded context**, each following a s
 backend/context/<context>/
   domain/
     entities/        # plain domain objects (no Prisma types)
-    repositories/    # interfaces (abstract classes)
+    repositories/    # interfaces
   application/
     dto/             # input/output shapes
     use-case/        # one class per use case, injected with repository interfaces
@@ -57,14 +59,21 @@ Bounded contexts: `user`, `company`, `raffle`, `payment`, `quantity-discount`, `
 
 **Key pattern**: API routes in `app/api/` wire everything together manually — they instantiate Prisma repositories, inject them into use cases, and call `execute()`. There is no DI container.
 
+**Shared utilities** live in `backend/shared/`:
+- `utils/close-raffle.ts` — full close flow: picks winners (ALEATORIO), writes `RaffleWinner` records in a transaction, sets status to `FINISHED`, sends email.
+- `raffle/raffle-verify-complete.ts` — called after approving a bank transfer; counts only `SOLD` numbers (not `RESERVED_WITH_COMPROBANT`) and closes the raffle if `soldCount === totalNumbers`.
+- `utils/map-quiniela-to-raffle-number.ts` — maps a 4-digit quiniela result to a raffle number via modulo arithmetic.
+- `utils/get-quiniela-number.ts` — scraper for the national lottery site; **incomplete** (returns `null`, has a `TODO`). Quiniela winner assignment is done manually by the organizer via the admin stats page.
+- `emails/` — email helpers using Resend. Call `sendEmail()` from `lib/email/send-email.ts`.
+
 ### Frontend layers
 
 - **`app/`** — Next.js App Router. Route groups: `(auth)` (login/register), `(authenticated)` (admin dashboard, requires session), `(public)` (landing, raffle view).
-- **`components/pages/`** — page-level feature components, one subdirectory per page (e.g. `create/`, `raffle/`, `admin/`).
+- **`components/pages/`** — page-level feature components, one subdirectory per page.
 - **`services/`** — client-side functions that call `apiClient`. Used from components and pages.
 - **`lib/api.ts`** — `ApiClient` singleton. Pass `serverSide: true` to forward cookies from server components. Pass `tags` to attach Next.js cache tags for ISR invalidation.
 - **`contexts/`** — React context providers for the raffle creation/edit forms and number selection.
-- **`components/ui/`** — shadcn/ui-based component library (Tailwind v4).
+- **`components/ui/`** — shadcn/ui-based component library (Tailwind v4). Color primary is violet/purple (`oklch(0.541 0.281 293.009)`).
 
 ### Auth
 
@@ -84,22 +93,35 @@ NextAuth v4 with JWT strategy (`lib/auth.ts`). Providers: credentials (email + b
 **Raffle lifecycle**: `DRAFT` → `ACTIVE` → `FINISHED`
 
 **Draw methods**:
-- `ALEATORIO` — random draw from sold numbers (shuffled at close time)
-- `QUINIELA_NACIONAL` — winner determined by scraping the Argentine national lottery result; the quiniela number is mapped to a raffle number via modulo arithmetic. **Note**: `backend/shared/utils/get-quiniela-number.ts` is incomplete (has a `TODO` marker and returns `null`).
+- `ALEATORIO` — random draw from sold numbers at close time; `closeRaffle()` picks winners automatically.
+- `QUINIELA_NACIONAL` — `closeRaffle()` sets status to `FINISHED` and sends a pending email; the organizer then manually enters the official lottery number in the admin stats page (`SectionAssignQuinielaWinner`), which calls `POST /api/raffle/[id]/assign-quiniela-winner`. That component only renders when `status === FINISHED && winners.length === 0`.
 
 **Draw triggers**:
-- `VENDER_TODO` — raffle closes automatically when all numbers are sold
-- `FECHA_FIJA` — raffle closes on a scheduled date (cron job `app/api/cron/close-raffles/`)
+- `VENDER_TODO` — after each bank-transfer approval, `RaffleVerifyComplete` counts `SOLD` numbers and calls `closeRaffle()` if all are sold.
+- `FECHA_FIJA` — the cron job `app/api/cron/close-raffles` (authenticated via `x-cron-secret`) runs daily and closes raffles whose `drawDate` falls on today (Argentina timezone).
 
-The shared `backend/shared/utils/close-raffle.ts` utility handles the full close flow for `ALEATORIO` draws: picks winners, writes `RaffleWinner` records in a transaction, sets status to `FINISHED`, and sends a completion email. Both the `VENDER_TODO` path and the cron job call this utility.
+**Payment flow — number purchase (bank transfer)**:
+Numbers go through these `ReservationStatus` states: `AVAILABLE` → `RESERVED` (TTL hold) → `RESERVED_WITH_COMPROBANT` (buyer uploaded bank transfer proof) → `SOLD` (organizer approved). Denied transfers delete the `SoldNumber` records and set payment to `REJECTED`.
+
+The review endpoint (`POST /api/raffle/[id]/sold-numbers/review`) handles approve/deny and triggers `RaffleVerifyComplete` on approval for `VENDER_TODO` raffles.
+
+**Important**: When counting "numbers sold" for stats or sold-count checks, always use `getSoldNumbersWithPayment()` (filters `status = SOLD`) — not `findByRaffleId()` which returns all statuses including `RESERVED_WITH_COMPROBANT`. The `findByRaffleId()` method is intentionally unfiltered because it's used by the buyer numbers grid to mark all occupied numbers (including pending comprobantes) as unavailable.
 
 **Payment types**:
-- `RAFFLE_ACTIVATION` — organizer pays to publish a raffle; approved by MercadoPago webhook → status set to `ACTIVE`
-- `NUMBER_PURCHASE` — buyer purchases numbers; approved by webhook → `SoldNumber` records set to `SOLD`
+- `RAFFLE_ACTIVATION` — organizer pays to publish a raffle; approved by MercadoPago webhook (`app/api/webhooks/mercadopago/`) → status set to `ACTIVE`. Uses the platform-level `MERCADOPAGO_ACCESS_TOKEN`.
+- `NUMBER_PURCHASE` — buyer pays via bank transfer + comprobante upload; organizer manually approves via admin stats page.
 
-**Companies** connect their own MercadoPago account via OAuth (`app/api/webhooks/mercadopago/oauth/`). The webhook identifies the correct company by `mpUserId` and uses their `mpAccessToken` when calling the MP API. Always retrieve the token via `getValidMpAccessToken(companyId)` from `lib/mercadopago.ts` — it transparently refreshes expired tokens using the stored `mpRefreshToken`.
+**Company banking fields**: The `Company` model stores `alias`, `cbu`, `cuit`, `banco`, and `titular` — used to display bank transfer instructions to buyers on the payment page.
 
-**SoldNumber reservation flow**: numbers go `AVAILABLE` → `RESERVED` (held for a TTL while checkout is pending) → `SOLD` (after payment approved). Rejected/cancelled payments return numbers to `AVAILABLE`.
+**Images**: Uploaded to Cloudinary. The `imagePublicId` field on `Raffle` is used for deletion.
+
+### Admin dashboard — raffle cards (`components/pages/admin/`)
+
+- `STATUS_BADGE`, `STATUS_OPTIONS`, `RAFFLES_OPTIONS` are defined in `components/pages/admin/constants/index.ts`.
+- On desktop (≥768px), the entire card is clickable and navigates to the stats page. The dropdown trigger calls `e.stopPropagation()` to prevent navigation.
+- Raffles that are `FINISHED` with no winners assigned get an amber border (`border-amber-300`) and appear first in the list (sorted in `app/(authenticated)/admin/page.tsx`). An amber `Alert` banner is shown above the grid when any such raffles exist.
+- The status badge appears over the image on desktop (absolute positioned) and inline in the card content on mobile.
+- `findByStatus` in `PrismaRaffleRepository` includes `winners` — required for the pending-winner sort and border logic.
 
 ### Error handling
 
