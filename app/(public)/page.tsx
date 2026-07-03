@@ -1,138 +1,261 @@
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Metadata } from "next";
+  ArrowLeftRight,
+  ArrowRight,
+  Eye,
+  FilePlus,
+  MapPin,
+  Settings2,
+  Share2,
+  ShieldCheck,
+  User,
+  Wallet,
+  Zap,
+} from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Numeralo — Rifas online simples y transparentes",
-  description: "Creá rifas online y recibí los pagos directamente en tu cuenta",
+  title: "Numeralo — Creá rifas online simples y transparentes",
+  description:
+    "Organizá tu rifa, compartí el link y vendé números. Los pagos van directo a tu Mercado Pago — sin intermediarios, sin complicaciones.",
 };
 
-export default function HomePage() {
+const STEPS = [
+  {
+    n: "01",
+    icon: FilePlus,
+    title: "Creá tu rifa",
+    desc: "Definí el premio, la cantidad de números y el precio por número. Elegí el tipo de sorteo y cuándo cierra.",
+  },
+  {
+    n: "02",
+    icon: Share2,
+    title: "Compartí el link",
+    desc: "Tu rifa tiene un link único. Compartilo por WhatsApp, Instagram o donde quieras para que los participantes compren.",
+  },
+  {
+    n: "03",
+    icon: Wallet,
+    title: "Cobrás directo",
+    desc: "Los participantes te transfieren directo a tu cuenta bancaria y suben el comprobante. Vos lo aprobás y el número queda vendido.",
+  },
+];
+
+const FEATURES = [
+  {
+    icon: Zap,
+    title: "Simple",
+    desc: "Creá tu rifa en minutos. Sin conocimientos técnicos ni configuraciones complejas.",
+  },
+  {
+    icon: Eye,
+    title: "Transparente",
+    desc: "Vos cobrás directo. Numeralo solo provee la plataforma — sin tocar el dinero en ningún momento.",
+  },
+  {
+    icon: Settings2,
+    title: "Flexible",
+    desc: "Sorteo aleatorio o por Quiniela Nacional. Cierre por fecha o al vender todos los números.",
+  },
+  {
+    icon: MapPin,
+    title: "Para creadores argentinos",
+    desc: "Pensado para el mercado local. Transferencias en pesos, precios en ARS y sorteos por la Quiniela Nacional.",
+  },
+];
+
+export default function LandingPage() {
   return (
-    <main className="flex flex-col gap-y-20 p-6 md:py-12">
-      <section className="flex flex-col items-center gap-y-6 text-center">
-        <h1 className="text-4xl font-bold md:text-5xl">
-          Creá rifas online de forma simple y transparente
-        </h1>
-        <p className="text-muted-foreground max-w-2xl text-lg">
-          Numeralo es una plataforma que te permite crear rifas online y vender
-          números fácilmente. Los pagos se acreditan directamente en tu cuenta
-          de Mercado Pago.
-        </p>
+    <main>
+      {/* ─── Hero ─── */}
+      <section
+        className="relative overflow-hidden px-6 py-24 text-center"
+        style={{
+          background:
+            "radial-gradient(ellipse 110% 55% at 50% -5%, oklch(0.541 0.281 293 / 0.17) 0%, transparent 65%)",
+        }}
+      >
+        <div className="mx-auto flex max-w-5xl flex-col items-center gap-5">
+          <div className="border-primary/25 bg-primary/12 text-primary inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1 text-[13px] font-medium">
+            <ShieldCheck size={13} />
+            Cobrás directo, sin intermediarios
+          </div>
 
-        <div className="flex gap-x-4">
-          <Button>
-            <Link href="/register">Crear mi primera rifa</Link>
-          </Button>
-          <Button variant="outline">
-            <Link href="/info">Cómo funciona</Link>
-          </Button>
-        </div>
-      </section>
+          <h1 className="max-w-3xl text-5xl leading-[1.06] font-bold tracking-[-0.03em] text-balance md:text-6xl lg:text-[68px]">
+            Creá rifas. <span className="text-primary">Cobrá directo.</span>
+          </h1>
 
-      <section className="grid gap-y-10 text-center md:grid-cols-3 md:gap-x-8">
-        <div>
-          <h3 className="mb-2 text-center text-xl font-semibold">
-            1. Creá tu rifa
-          </h3>
-          <p className="text-muted-foreground">
-            Definí el premio, la cantidad de números y el valor de cada uno.
+          <p className="text-muted-foreground max-w-[560px] text-lg leading-relaxed">
+            Organizá tu rifa, compartí el link y vendé números. Los
+            participantes te transfieren directo a tu cuenta — Numeralo nunca
+            toca el dinero.
           </p>
-        </div>
 
-        <div>
-          <h3 className="mb-2 text-center text-xl font-semibold">
-            2. Vendé números
-          </h3>
-          <p className="text-muted-foreground">
-            Compartí tu rifa y permití que otros usuarios compren números.
-          </p>
-        </div>
-
-        <div>
-          <h3 className="mb-2 text-xl font-semibold">
-            3. Cobrá con Mercado Pago
-          </h3>
-          <p className="text-muted-foreground">
-            El dinero se acredita directamente en tu cuenta de Mercado Pago.
-          </p>
-        </div>
-      </section>
-
-      <section>
-        <Card className="">
-          <CardHeader>
-            <CardTitle className="text-center text-3xl font-semibold">
-              Pagos claros y sin intermediarios
-            </CardTitle>
-            <CardDescription className="text-center text-lg">
-              Numeralo no recibe ni administra el dinero de las rifas. Todos los
-              pagos son procesados por Mercado Pago y se acreditan directamente
-              en la cuenta del creador de la rifa.
-            </CardDescription>
-          </CardHeader>
-        </Card>
-      </section>
-
-      <section className="grid gap-y-8 md:grid-cols-2 md:gap-x-10">
-        <div>
-          <h3 className="mb-2 text-xl font-semibold md:text-center">
-            Simple de usar
-          </h3>
-          <p className="text-muted-foreground md:text-center">
-            Creá y gestioná tus rifas sin conocimientos técnicos.
-          </p>
-        </div>
-
-        <div>
-          <h3 className="mb-2 text-xl font-semibold md:text-center">
-            Transparente
-          </h3>
-          <p className="text-muted-foreground md:text-center">
-            Vos cobrás directamente. Numeralo solo facilita la plataforma.
-          </p>
-        </div>
-
-        <div>
-          <h3 className="mb-2 text-xl font-semibold md:text-center">Seguro</h3>
-          <p className="text-muted-foreground md:text-center">
-            Los pagos se realizan a través de Mercado Pago.
-          </p>
-        </div>
-
-        <div>
-          <h3 className="mb-2 text-xl font-semibold md:text-center">
-            Enfocado en creadores
-          </h3>
-          <p className="text-muted-foreground md:text-center">
-            Pensado para personas que quieren organizar rifas de forma digital.
-          </p>
-        </div>
-      </section>
-
-      <section>
-        <Card>
-          <CardHeader>
-            <CardHeader className="text-center text-3xl font-semibold">
-              Empezá a crear tu rifa hoy
-            </CardHeader>
-            <CardDescription className="text-center text-lg">
-              Registrate gratis y publicá tu primera rifa en minutos.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="flex justify-center">
-            <Button>
-              <Link href="/register">Crear mi primera rifa</Link>
+          <div className="mt-1 flex flex-wrap justify-center gap-2.5">
+            <Button size="lg" asChild>
+              <Link href="/register">
+                Crear mi primera rifa <ArrowRight size={16} />
+              </Link>
             </Button>
-          </CardContent>
-        </Card>
+            <Button size="lg" variant="outline" asChild>
+              <Link href="/info">Cómo funciona</Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Steps ─── */}
+      <section className="bg-muted/40 py-20">
+        <div className="container mx-auto px-6">
+          <div className="mb-11 text-center">
+            <span className="text-primary mb-2.5 block text-[11.5px] font-semibold tracking-[0.09em] uppercase">
+              Cómo funciona
+            </span>
+            <h2 className="mx-auto max-w-md text-3xl font-bold tracking-tight">
+              Tres pasos y ya estás sorteando
+            </h2>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {STEPS.map(({ n, icon: Icon, title, desc }) => (
+              <div
+                key={n}
+                className="border-border bg-card flex flex-col gap-3.5 rounded-[14px] border p-[22px]"
+              >
+                <div className="flex items-center gap-2.5">
+                  <span className="border-primary/28 bg-primary/13 text-primary flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[10px] border font-mono text-[13px] font-semibold">
+                    {n}
+                  </span>
+                  <span className="bg-primary/16 text-primary flex h-[38px] w-[38px] flex-shrink-0 items-center justify-center rounded-[10px]">
+                    <Icon size={18} />
+                  </span>
+                </div>
+                <h3 className="text-[18px] font-semibold tracking-[-0.01em]">
+                  {title}
+                </h3>
+                <p className="text-muted-foreground text-[14.5px] leading-relaxed">
+                  {desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Trust ─── */}
+      <section className="py-20">
+        <div className="container mx-auto px-6">
+          <div className="border-primary/24 bg-card grid items-center gap-9 rounded-[18px] border p-8 lg:grid-cols-2 lg:p-12">
+            {/* Text */}
+            <div>
+              <div className="mb-3.5 flex items-center gap-2.5">
+                <span className="bg-primary/16 text-primary flex h-[42px] w-[42px] flex-shrink-0 items-center justify-center rounded-[11px]">
+                  <ShieldCheck size={22} />
+                </span>
+                <span className="text-primary text-[11.5px] font-semibold tracking-[0.09em] uppercase">
+                  Transparencia total
+                </span>
+              </div>
+              <h2 className="mb-3.5 text-[30px] leading-snug font-bold tracking-tight text-pretty">
+                El dinero siempre va directo a vos
+              </h2>
+              <p className="text-muted-foreground text-[15px] leading-[1.7]">
+                Numeralo no retiene ni administra el dinero de las rifas. Los
+                participantes transfieren directo a la cuenta bancaria del
+                creador — Numeralo nunca interviene en ese pago. Mercado Pago se
+                usa solo para activar la rifa.
+              </p>
+            </div>
+            {/* Flow diagram */}
+            <div className="flex flex-col items-center gap-2.5">
+              <div className="flex flex-wrap items-center justify-center gap-2.5">
+                <div className="border-border bg-card flex flex-col items-center gap-1 rounded-[10px] border px-4 py-3 text-[13px] font-medium">
+                  <User size={20} />
+                  Participante
+                  <span className="text-muted-foreground text-[11px] font-normal">
+                    paga
+                  </span>
+                </div>
+                <ArrowRight size={18} className="text-muted-foreground" />
+                <div className="border-primary/33 bg-primary/8 flex flex-col items-center gap-1 rounded-[10px] border px-4 py-3 text-[13px] font-medium">
+                  <ArrowLeftRight size={20} />
+                  Transferencia
+                  <span className="text-muted-foreground text-[11px] font-normal">
+                    directa
+                  </span>
+                </div>
+                <ArrowRight size={18} className="text-muted-foreground" />
+                <div className="flex flex-col items-center gap-1 rounded-[10px] border border-[--chart-1]/40 bg-[--chart-1]/9 px-4 py-3 text-[13px] font-medium text-[--chart-1]">
+                  <Wallet size={20} />
+                  Tu cuenta
+                  <span className="text-muted-foreground text-[11px] font-normal">
+                    recibe
+                  </span>
+                </div>
+              </div>
+              <p className="text-muted-foreground text-center text-[12px] tracking-[.01em]">
+                Numeralo actúa solo como plataforma tecnológica
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Features ─── */}
+      <section className="bg-muted/40 py-20">
+        <div className="container mx-auto px-6">
+          <div className="mb-11 text-center">
+            <span className="text-primary mb-2.5 block text-[11.5px] font-semibold tracking-[0.09em] uppercase">
+              Por qué Numeralo
+            </span>
+            <h2 className="mx-auto max-w-sm text-3xl font-bold tracking-tight">
+              Pensado para quien organiza
+            </h2>
+          </div>
+          <div className="grid gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
+            {FEATURES.map(({ icon: Icon, title, desc }) => (
+              <div
+                key={title}
+                className="border-border bg-card flex flex-col gap-2.5 rounded-[14px] border p-[22px]"
+              >
+                <span className="bg-primary/16 text-primary flex h-[38px] w-[38px] items-center justify-center rounded-[10px]">
+                  <Icon size={18} />
+                </span>
+                <h3 className="text-base font-semibold">{title}</h3>
+                <p className="text-muted-foreground text-[14px] leading-relaxed">
+                  {desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── CTA ─── */}
+      <section className="py-20">
+        <div className="container mx-auto px-6">
+          <div
+            className="border-primary/24 rounded-[18px] border p-12 text-center"
+            style={{
+              background: "color-mix(in oklch, var(--primary) 9%, var(--card))",
+            }}
+          >
+            <h2 className="mb-3 text-[34px] font-bold tracking-tight text-balance">
+              Empezá hoy — es gratis registrarse
+            </h2>
+            <p className="text-muted-foreground mx-auto mb-7 max-w-md text-[15.5px] leading-relaxed">
+              Creá tu primera rifa sin costo. Pagás solo cuando publicás.
+            </p>
+            <div className="flex flex-wrap justify-center gap-2.5">
+              <Button size="lg" asChild>
+                <Link href="/register">Crear mi primera rifa</Link>
+              </Button>
+              <Button size="lg" variant="outline" asChild>
+                <Link href="/info">Ver cómo funciona</Link>
+              </Button>
+            </div>
+          </div>
+        </div>
       </section>
     </main>
   );
