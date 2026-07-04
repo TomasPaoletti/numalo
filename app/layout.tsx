@@ -5,6 +5,7 @@ import Script from "next/script";
 import { Toaster } from "@/components/ui/sonner";
 
 import { ThemeProvider } from "@/components/shared/theme/theme-provider";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -39,7 +40,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <TooltipProvider>{children}</TooltipProvider>
           <Toaster position="top-center" />
           <Script
             src="https://cloud.umami.is/script.js"

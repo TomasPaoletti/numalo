@@ -14,13 +14,17 @@ export default async function AdminLayout({
   const session = await getServerSession(authOptions);
 
   const companyId = session?.user.companyId;
+  const hasBankDetails = session?.user.hasBankDetails;
 
   return (
     <SessionProviderNextAuth>
       <main className="h-dvh w-full">
         <AuthenticatedNavBar />
         <div className="container mx-auto w-full px-6 pt-20 pb-6 md:pb-12">
-          {!companyId && <AlertCompany />}
+          {!companyId && <AlertCompany variant="no-company" />}
+          {companyId && !hasBankDetails && (
+            <AlertCompany variant="no-bank-details" />
+          )}
           {children}
         </div>
       </main>

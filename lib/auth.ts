@@ -50,6 +50,7 @@ export const authOptions: AuthOptions = {
           firstName: user.firstName,
           lastName: user.lastName,
           companyId: user.companyId,
+          hasBankDetails: !!(user.company?.alias || user.company?.cbu),
         };
       },
     }),
@@ -94,6 +95,7 @@ export const authOptions: AuthOptions = {
         token.firstName = user.firstName;
         token.lastName = user.lastName;
         token.companyId = user.companyId;
+        token.hasBankDetails = user.hasBankDetails;
       }
 
       if (user && account?.provider === "google") {
@@ -107,12 +109,18 @@ export const authOptions: AuthOptions = {
           token.firstName = dbUser.firstName;
           token.lastName = dbUser.lastName;
           token.companyId = dbUser.companyId;
+          token.hasBankDetails = !!(
+            dbUser.company?.alias || dbUser.company?.cbu
+          );
         }
       }
 
       if (trigger === "update") {
         if (session?.companyId) {
           token.companyId = session.companyId;
+        }
+        if (typeof session?.hasBankDetails === "boolean") {
+          token.hasBankDetails = session.hasBankDetails;
         }
       }
 
@@ -126,6 +134,7 @@ export const authOptions: AuthOptions = {
         session.user.name = token.name || null;
         session.user.email = token.email || null;
         session.user.companyId = (token.companyId as string | null) || null;
+        session.user.hasBankDetails = !!token.hasBankDetails;
       }
       return session;
     },
