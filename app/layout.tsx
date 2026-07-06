@@ -65,7 +65,7 @@ export const metadata: Metadata = {
       "Creá y gestioná rifas online en minutos. Vendé números, cobrá por transferencia y sorteá automáticamente.",
     images: [
       {
-        url: "/og-image.png",
+        url: "/opengraph-image.png",
         width: 1200,
         height: 630,
         alt: "Numeralo — Plataforma de rifas online",
@@ -77,7 +77,7 @@ export const metadata: Metadata = {
     title: "Numeralo — Plataforma de rifas online para Argentina",
     description:
       "Creá y gestioná rifas online en minutos. La plataforma de rifas para Argentina.",
-    images: ["/og-image.png"],
+    images: ["/opengraph-image.png"],
   },
 };
 

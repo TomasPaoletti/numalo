@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Numeralo — Política de privacidad",
+  title: "Política de privacidad",
   description:
     "Política de privacidad de Numeralo. Cómo recopilamos, usamos y protegemos tu información personal.",
 };
