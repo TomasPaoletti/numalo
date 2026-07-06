@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { DrawTrigger, RaffleStatus } from "@/app/generated/prisma/enums";
+import {
+  DrawTrigger,
+  RaffleStatus,
+  ReservationStatus,
+} from "@/app/generated/prisma/enums";
 
 import prisma from "@/lib/prisma";
 
@@ -16,6 +20,13 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    await prisma.soldNumber.deleteMany({
+      where: {
+        status: ReservationStatus.RESERVED,
+        reservedUntil: { lt: new Date() },
+      },
+    });
+
     const { start, end } = getTodayArgentina();
 
     const raffles = await prisma.raffle.findMany({

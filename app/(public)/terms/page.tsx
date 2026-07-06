@@ -32,10 +32,10 @@ export default function TermsPage() {
           Al usar Numeralo aceptás estos términos. Te pedimos que los leas con
           atención. Si tenés preguntas, podés escribirnos a{" "}
           <a
-            href="mailto:contacto@numeralo.com"
+            href="mailto:contacto@numeraloapp.com"
             className="text-primary hover:underline"
           >
-            contacto@numeralo.com
+            contacto@numeraloapp.com
           </a>
           .
         </p>
@@ -198,10 +198,10 @@ export default function TermsPage() {
         <p className="text-muted-foreground text-[13.5px] leading-[1.7]">
           ¿Tenés preguntas sobre estos términos? Contactanos en{" "}
           <a
-            href="mailto:contacto@numeralo.com"
+            href="mailto:contacto@numeraloapp.com"
             className="text-primary hover:underline"
           >
-            contacto@numeralo.com
+            contacto@numeraloapp.com
           </a>
           .
         </p>
