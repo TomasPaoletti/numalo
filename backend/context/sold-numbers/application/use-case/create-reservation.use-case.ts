@@ -16,6 +16,11 @@ export class CreateReservationUseCase {
 
     await this.soldNumbersRepository.clearExpiredReservations(raffleId);
 
+    await this.soldNumbersRepository.deleteReserverdNumberBySession(
+      raffleId,
+      sessionId
+    );
+
     const unavailable = await this.soldNumbersRepository.getUnavailableNumbers(
       raffleId,
       numbers

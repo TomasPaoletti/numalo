@@ -41,9 +41,9 @@ export default function Footer() {
             <Link href="/contact">Contacto</Link>
             <a
               className="text-primary break-all underline underline-offset-2"
-              href="mailto:contacto@numeralo.com"
+              href="mailto:contacto@numeraloapp.com"
             >
-              contacto@numeralo.com
+              contacto@numeraloapp.com
             </a>
           </div>
         </div>

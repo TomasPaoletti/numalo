@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, Clock, Send, ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import { cn, formatPrice } from "@/lib/utils";
@@ -11,8 +11,6 @@ import { useReservationTimer } from "@/components/pages/raffle/pagar/hooks/useRe
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
@@ -21,6 +19,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+
+import DeleteReservation from "@/components/pages/raffle/sold-number/services/delete-reservation.service";
 
 import BankDetailRows from "./BankDetailRows";
 import ComprobanteDropzone from "./ComprobanteDropzone";
@@ -65,6 +72,8 @@ export default function PagarClient({
   const [file, setFile] = useState<File | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [expiredOpen, setExpiredOpen] = useState(false);
+  const [cancelOpen, setCancelOpen] = useState(false);
+  const [cancelLoading, setCancelLoading] = useState(false);
   const [pendingFormData, setPendingFormData] = useState<FormData | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -104,12 +113,24 @@ export default function PagarClient({
     router.push(`/raffle/${raffleId}/sold-number`);
   };
 
+  const handleConfirmBack = async () => {
+    setCancelLoading(true);
+    try {
+      await DeleteReservation(raffleId, sessionId);
+    } catch {
+      // best effort — the TTL will clean it up
+    } finally {
+      setCancelLoading(false);
+    }
+    router.push(`/raffle/${raffleId}/sold-number`);
+  };
+
   return (
     <>
       <div className="w-full p-6 pb-32 md:py-12 md:pb-32">
         <div className="flex flex-col gap-[18px]">
           <button
-            onClick={() => router.back()}
+            onClick={() => setCancelOpen(true)}
             className="text-muted-foreground hover:bg-muted flex w-fit items-center gap-1.5 rounded-md px-2 py-1 text-sm transition-colors duration-150"
           >
             <ArrowLeft size={14} />
@@ -157,8 +178,10 @@ export default function PagarClient({
                 ))}
               </div>
               <div className="border-border border-t pt-3">
-                <p className="text-muted-foreground text-xs">Total a transferir</p>
-                <p className="font-mono text-[30px] font-semibold text-primary">
+                <p className="text-muted-foreground text-xs">
+                  Total a transferir
+                </p>
+                <p className="text-primary font-mono text-[30px] font-semibold">
                   {formatPrice(finalPrice)}
                 </p>
               </div>
@@ -281,7 +304,7 @@ export default function PagarClient({
 
       <div className="bg-background fixed right-0 bottom-0 left-0 border-t px-4 py-2">
         <div className="mx-auto flex items-center justify-between">
-          <Button variant="outline" onClick={() => router.back()}>
+          <Button variant="outline" onClick={() => setCancelOpen(true)}>
             <ArrowLeft size={16} />
             Volver
           </Button>
@@ -304,6 +327,35 @@ export default function PagarClient({
         }}
         formData={pendingFormData}
       />
+
+      {/* Cancel reservation dialog */}
+      <Dialog open={cancelOpen} onOpenChange={setCancelOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>¿Cancelar la reserva?</DialogTitle>
+            <DialogDescription>
+              Si volvés a elegir números, tu reserva actual será cancelada y los
+              números quedarán disponibles nuevamente.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setCancelOpen(false)}
+              disabled={cancelLoading}
+            >
+              Quedarme aquí
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleConfirmBack}
+              disabled={cancelLoading}
+            >
+              Sí, cancelar reserva
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Expired reservation dialog */}
       <Dialog open={expiredOpen} onOpenChange={() => {}}>

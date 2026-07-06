@@ -2,6 +2,7 @@ import { GetSoldNumbersByRaffle } from "@/services/sold-number";
 
 import { SelectedNumbersProvider } from "@/contexts/SelectedNumbersContext";
 
+import ReservationRecoveryModal from "@/components/pages/raffle/sold-number/components/ReservationRecoveryModal";
 import SoldNumberFilter from "@/components/pages/raffle/sold-number/components/SoldNumberFilter";
 import SoldNumberFooter from "@/components/pages/raffle/sold-number/components/SoldNumberFooter";
 import SoldNumberHeader from "@/components/pages/raffle/sold-number/components/SoldNumberHeader";
@@ -18,6 +19,7 @@ export default async function RaffleIdSoldNumbers({
 
   return (
     <SelectedNumbersProvider raffleWithNumbers={raffleWithNumbers}>
+      <ReservationRecoveryModal raffleId={id} />
       <div className="flex w-full flex-col p-6 md:py-12">
         <SoldNumberHeader
           title={raffleWithNumbers.title}

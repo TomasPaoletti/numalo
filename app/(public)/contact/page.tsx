@@ -2,7 +2,8 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Contacto",
-  description: "Contactate con el equipo de Numeralo para consultas sobre la plataforma de rifas online.",
+  description:
+    "Contactate con el equipo de Numeralo para consultas sobre la plataforma de rifas online.",
 };
 
 export default function ContactPage() {
@@ -18,10 +19,10 @@ export default function ContactPage() {
       <p>
         <span className="font-medium">Email:</span>{" "}
         <a
-          href="mailto:contacto@numeralo.com"
+          href="mailto:contacto@numeraloapp.com"
           className="font-medium underline"
         >
-          contacto@numeralo.com
+          contacto@numeraloapp.com
         </a>
       </p>
     </div>
