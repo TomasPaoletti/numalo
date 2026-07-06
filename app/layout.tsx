@@ -19,8 +19,66 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Numeralo",
-  description: "",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL ?? "https://numeraloapp.com",
+  ),
+  title: {
+    default: "Numeralo — Plataforma de rifas online para Argentina",
+    template: "%s | Numeralo",
+  },
+  description:
+    "Creá y gestioná rifas online en minutos. Vendé números, cobrá por transferencia directa y sorteá de forma automática. La plataforma de rifas para Argentina.",
+  keywords: [
+    "rifas online",
+    "automatizar rifas",
+    "web para rifas",
+    "plataforma de rifas",
+    "rifas argentina",
+    "crear rifas online",
+    "organizar rifas",
+    "sorteos online",
+    "rifas por transferencia",
+    "sorteos argentina",
+    "rifas numeradas",
+    "vender numeros rifa",
+  ],
+  authors: [{ name: "Numeralo", url: "https://numeraloapp.com" }],
+  creator: "Numeralo",
+  publisher: "Numeralo",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  openGraph: {
+    type: "website",
+    locale: "es_AR",
+    siteName: "Numeralo",
+    title: "Numeralo — Plataforma de rifas online para Argentina",
+    description:
+      "Creá y gestioná rifas online en minutos. Vendé números, cobrá por transferencia y sorteá automáticamente.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Numeralo — Plataforma de rifas online",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Numeralo — Plataforma de rifas online para Argentina",
+    description:
+      "Creá y gestioná rifas online en minutos. La plataforma de rifas para Argentina.",
+    images: ["/og-image.png"],
+  },
 };
 
 export default function RootLayout({
