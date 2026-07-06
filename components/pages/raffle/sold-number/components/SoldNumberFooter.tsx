@@ -44,7 +44,10 @@ const SoldNumberFooter = ({ raffleId }: SoldNumberFooterProps) => {
       router.push(`/raffle/${raffleId}/pagar?session_id=${sessionId}`);
     } catch (error: any) {
       toast.dismiss();
-      toast.error(error.apiError?.message || "Error al reservar números");
+      const msg = error.apiError?.message || "Error al reservar números";
+      toast.error(msg, {
+        duration: error.apiError?.statusCode === 429 ? 8000 : 4000,
+      });
     } finally {
       setLoading(false);
     }
