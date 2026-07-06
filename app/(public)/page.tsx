@@ -16,9 +16,33 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Numeralo — Creá rifas online simples y transparentes",
+  title: {
+    absolute: "Numeralo — Rifas online para Argentina",
+  },
   description:
-    "Organizá tu rifa, compartí el link y vendé números. Los pagos van directo a tu Mercado Pago — sin intermediarios, sin complicaciones.",
+    "Organizá tu rifa online, compartí el link y vendé números. Los participantes pagan por transferencia directa — sin intermediarios. La forma más simple de automatizar rifas en Argentina.",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "Numeralo — Rifas online para Argentina",
+    description:
+      "Organizá tu rifa online, compartí el link y vendé números. Cobros por transferencia directa — sin intermediarios.",
+    url: "/",
+    images: [
+      {
+        url: "/opengraph-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Numeralo — Plataforma de rifas online",
+      },
+    ],
+  },
+  twitter: {
+    title: "Numeralo — Rifas online para Argentina",
+    description:
+      "Organizá tu rifa online, compartí el link y vendé números. Cobros por transferencia directa — sin intermediarios.",
+  },
 };
 
 const STEPS = [
@@ -65,9 +89,57 @@ const FEATURES = [
   },
 ];
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://numeraloapp.com/#website",
+      name: "Numeralo",
+      url: "https://numeraloapp.com",
+      description:
+        "Plataforma para crear y gestionar rifas online en Argentina",
+      inLanguage: "es-AR",
+    },
+    {
+      "@type": "WebApplication",
+      "@id": "https://numeraloapp.com/#app",
+      name: "Numeralo",
+      url: "https://numeraloapp.com",
+      description:
+        "Creá y automatizá rifas online en minutos. Vendé números, gestioná pagos por transferencia y sorteá de forma automática.",
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "Web",
+      inLanguage: "es-AR",
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "ARS",
+        description: "Registro gratuito. Pago por publicación de rifa.",
+      },
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://numeraloapp.com/#organization",
+      name: "Numeralo",
+      url: "https://numeraloapp.com",
+      contactPoint: {
+        "@type": "ContactPoint",
+        email: "contacto@numeraloapp.com",
+        contactType: "customer service",
+        availableLanguage: "Spanish",
+      },
+    },
+  ],
+};
+
 export default function LandingPage() {
   return (
     <main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* ─── Hero ─── */}
       <section
         className="relative overflow-hidden px-6 py-24 text-center"

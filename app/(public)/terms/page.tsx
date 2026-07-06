@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Numeralo — Términos y condiciones",
+  title: "Términos y condiciones",
   description:
     "Términos y condiciones de uso de Numeralo, la plataforma para crear y gestionar rifas online.",
 };

@@ -13,10 +13,22 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const SectionEmptyStateAdmin = () => {
   const { data } = useSession();
   const companyId = data?.user.companyId;
+  const hasBankDetails = data?.user.hasBankDetails;
+  const canCreateRaffle = !!companyId && !!hasBankDetails;
+
+  const disabledReason = !companyId
+    ? "Primero registrá tu compañía en Ajustes para poder crear rifas."
+    : "Agregá un alias o CBU en Ajustes para poder crear rifas.";
+
   return (
     <Empty>
       <EmptyHeader>
@@ -30,14 +42,21 @@ const SectionEmptyStateAdmin = () => {
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
-        {companyId ? (
+        {canCreateRaffle ? (
           <Link href="/admin/create">
             <Button size="sm">Crear rifa</Button>
           </Link>
         ) : (
-          <Button size="sm" disabled>
-            Crear rifa
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span tabIndex={0}>
+                <Button size="sm" disabled className="pointer-events-none">
+                  Crear rifa
+                </Button>
+              </span>
+            </TooltipTrigger>
+            <TooltipContent>{disabledReason}</TooltipContent>
+          </Tooltip>
         )}
       </EmptyContent>
     </Empty>

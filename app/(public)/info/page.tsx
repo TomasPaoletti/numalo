@@ -14,9 +14,18 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Numeralo — Cómo funciona",
+  title: "Cómo funciona",
   description:
-    "Entendé cómo funciona Numeralo: creación de rifas, gestión de pagos, tipos de sorteo y responsabilidades.",
+    "Entendé cómo crear y gestionar rifas online con Numeralo: creación de rifas, tipos de sorteo, cobros por transferencia y responsabilidades.",
+  alternates: {
+    canonical: "/info",
+  },
+  openGraph: {
+    title: "Cómo funciona | Numeralo",
+    description:
+      "Entendé cómo crear y gestionar rifas online con Numeralo: creación, sorteos y cobros por transferencia.",
+    url: "/info",
+  },
 };
 
 const STEPS = [

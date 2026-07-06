@@ -2,7 +2,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Contacto",
-  description: "Contacto con Numeralo",
+  description: "Contactate con el equipo de Numeralo para consultas sobre la plataforma de rifas online.",
 };
 
 export default function ContactPage() {

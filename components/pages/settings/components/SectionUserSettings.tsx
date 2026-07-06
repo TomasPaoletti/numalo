@@ -139,7 +139,7 @@ const SectionUserSettings = ({ user }: SectionUserSettingsProps) => {
             type="submit"
             form="form-user-settings"
             className="ml-auto"
-            variant="secondary"
+            variant="outline"
           >
             {loading && <Spinner />}
             Guardar

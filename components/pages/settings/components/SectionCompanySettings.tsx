@@ -67,7 +67,10 @@ const SectionCompanySettings = ({ company }: SectionCompanySettingsProps) => {
         cuit: data.cuit || null,
         banco: data.banco || null,
       });
-      await update({ companyId: updated.id });
+      await update({
+        companyId: updated.id,
+        hasBankDetails: !!(updated.alias || updated.cbu),
+      });
 
       toast.success("Datos guardados");
       router.refresh();
@@ -98,9 +101,16 @@ const SectionCompanySettings = ({ company }: SectionCompanySettingsProps) => {
                 name="name"
                 control={form.control}
                 render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid} className="col-span-1">
+                  <Field
+                    data-invalid={fieldState.invalid}
+                    className="col-span-1"
+                  >
                     <FieldLabel htmlFor="name">Nombre</FieldLabel>
-                    <Input {...field} id="name" aria-invalid={fieldState.invalid} />
+                    <Input
+                      {...field}
+                      id="name"
+                      aria-invalid={fieldState.invalid}
+                    />
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
@@ -111,9 +121,16 @@ const SectionCompanySettings = ({ company }: SectionCompanySettingsProps) => {
                 name="phone"
                 control={form.control}
                 render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid} className="col-span-1">
+                  <Field
+                    data-invalid={fieldState.invalid}
+                    className="col-span-1"
+                  >
                     <FieldLabel htmlFor="phone">Número de teléfono</FieldLabel>
-                    <Input {...field} id="phone" aria-invalid={fieldState.invalid} />
+                    <Input
+                      {...field}
+                      id="phone"
+                      aria-invalid={fieldState.invalid}
+                    />
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
@@ -123,14 +140,21 @@ const SectionCompanySettings = ({ company }: SectionCompanySettingsProps) => {
             </FieldGroup>
 
             <div className="mt-6 border-t pt-6">
-              <p className="text-sm font-medium mb-3">Datos para transferencia</p>
+              <p className="mb-3 text-sm font-medium">
+                Datos para transferencia
+              </p>
               <FieldGroup className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Controller
                   name="titular"
                   control={form.control}
                   render={({ field, fieldState }) => (
-                    <Field data-invalid={fieldState.invalid} className="col-span-1 sm:col-span-2">
-                      <FieldLabel htmlFor="titular">Titular de la cuenta</FieldLabel>
+                    <Field
+                      data-invalid={fieldState.invalid}
+                      className="col-span-1 sm:col-span-2"
+                    >
+                      <FieldLabel htmlFor="titular">
+                        Titular de la cuenta
+                      </FieldLabel>
                       <Input
                         {...field}
                         id="titular"
@@ -147,10 +171,15 @@ const SectionCompanySettings = ({ company }: SectionCompanySettingsProps) => {
                   name="alias"
                   control={form.control}
                   render={({ field, fieldState }) => (
-                    <Field data-invalid={fieldState.invalid} className="col-span-1">
+                    <Field
+                      data-invalid={fieldState.invalid}
+                      className="col-span-1"
+                    >
                       <FieldLabel htmlFor="alias">
                         Alias{" "}
-                        <span className="text-muted-foreground font-normal text-xs">(requerido si no hay CBU)</span>
+                        <span className="text-muted-foreground text-xs font-normal">
+                          (requerido si no hay CBU)
+                        </span>
                       </FieldLabel>
                       <Input
                         {...field}
@@ -168,10 +197,15 @@ const SectionCompanySettings = ({ company }: SectionCompanySettingsProps) => {
                   name="cbu"
                   control={form.control}
                   render={({ field, fieldState }) => (
-                    <Field data-invalid={fieldState.invalid} className="col-span-1">
+                    <Field
+                      data-invalid={fieldState.invalid}
+                      className="col-span-1"
+                    >
                       <FieldLabel htmlFor="cbu">
                         CBU{" "}
-                        <span className="text-muted-foreground font-normal text-xs">(requerido si no hay Alias)</span>
+                        <span className="text-muted-foreground text-xs font-normal">
+                          (requerido si no hay Alias)
+                        </span>
                       </FieldLabel>
                       <Input
                         {...field}
@@ -189,10 +223,15 @@ const SectionCompanySettings = ({ company }: SectionCompanySettingsProps) => {
                   name="banco"
                   control={form.control}
                   render={({ field, fieldState }) => (
-                    <Field data-invalid={fieldState.invalid} className="col-span-1">
+                    <Field
+                      data-invalid={fieldState.invalid}
+                      className="col-span-1"
+                    >
                       <FieldLabel htmlFor="banco">
                         Banco{" "}
-                        <span className="text-muted-foreground font-normal text-xs">Opcional</span>
+                        <span className="text-muted-foreground text-xs font-normal">
+                          Opcional
+                        </span>
                       </FieldLabel>
                       <Input
                         {...field}
@@ -210,10 +249,15 @@ const SectionCompanySettings = ({ company }: SectionCompanySettingsProps) => {
                   name="cuit"
                   control={form.control}
                   render={({ field, fieldState }) => (
-                    <Field data-invalid={fieldState.invalid} className="col-span-1">
+                    <Field
+                      data-invalid={fieldState.invalid}
+                      className="col-span-1"
+                    >
                       <FieldLabel htmlFor="cuit">
                         CUIT / CUIL{" "}
-                        <span className="text-muted-foreground font-normal text-xs">Opcional</span>
+                        <span className="text-muted-foreground text-xs font-normal">
+                          Opcional
+                        </span>
                       </FieldLabel>
                       <Input
                         {...field}
@@ -237,7 +281,7 @@ const SectionCompanySettings = ({ company }: SectionCompanySettingsProps) => {
             type="submit"
             form="form-company-settings"
             className="ml-auto"
-            variant="secondary"
+            variant="outline"
           >
             {loading && <Spinner />}
             Guardar
