@@ -4,6 +4,7 @@ import {
   ArrowRight,
   Eye,
   FilePlus,
+  Gift,
   MapPin,
   Settings2,
   Share2,
@@ -150,8 +151,8 @@ export default function LandingPage() {
       >
         <div className="mx-auto flex max-w-5xl flex-col items-center gap-5">
           <div className="border-primary/25 bg-primary/12 text-primary inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1 text-[13px] font-medium">
-            <ShieldCheck size={13} />
-            Cobrás directo, sin intermediarios
+            <Gift size={13} />
+            Tu primera rifa es gratis
           </div>
 
           <h1 className="max-w-3xl text-5xl leading-[1.06] font-bold tracking-[-0.03em] text-balance md:text-6xl lg:text-[68px]">
@@ -161,7 +162,7 @@ export default function LandingPage() {
           <p className="text-muted-foreground max-w-[560px] text-lg leading-relaxed">
             Organizá tu rifa, compartí el link y vendé números. Los
             participantes te transfieren directo a tu cuenta — Numeralo nunca
-            toca el dinero.
+            toca el dinero. <span className="text-foreground font-medium">La primera rifa la publicás gratis.</span>
           </p>
 
           <div className="mt-1 flex flex-wrap justify-center gap-2.5">
@@ -313,10 +314,10 @@ export default function LandingPage() {
             }}
           >
             <h2 className="mb-3 text-[34px] font-bold tracking-tight text-balance">
-              Empezá hoy — es gratis registrarse
+              Tu primera rifa es gratis
             </h2>
             <p className="text-muted-foreground mx-auto mb-7 max-w-md text-[15.5px] leading-relaxed">
-              Creá tu primera rifa sin costo. Pagás solo cuando publicás.
+              Registrate, creá tu rifa y publicala sin pagar nada. A partir de la segunda, pagás por publicación.
             </p>
             <div className="flex flex-wrap justify-center gap-2.5">
               <Button size="lg" asChild>
