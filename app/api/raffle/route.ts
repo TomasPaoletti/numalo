@@ -11,6 +11,8 @@ import { PrismaRaffleRepository } from "@/backend/context/raffle/infrastructure/
 import { CreateQuantityDiscountUseCase } from "@/backend/context/quantity-discount/application/use-case";
 import { PrismaQuantityDiscountRepository } from "@/backend/context/quantity-discount/infrastructure/database/quantity-discount.prisma-repository";
 
+import { PrismaCompanyRepository } from "@/backend/context/company/infrastructure/database/company.prisma-repository";
+
 import { CustomError } from "@/backend/shared/errors";
 import { requireAuth } from "@/backend/shared/guards/auth.guard";
 
@@ -52,9 +54,11 @@ export async function POST(req: NextRequest) {
     const createQuantityDiscountUseCase = new CreateQuantityDiscountUseCase(
       quantityDiscountRepository
     );
+    const companyRepository = new PrismaCompanyRepository();
     const createRaffleUseCase = new CreateRaffleUseCase(
       raffleRepository,
-      createQuantityDiscountUseCase
+      createQuantityDiscountUseCase,
+      companyRepository
     );
 
     const raffle = await createRaffleUseCase.execute(companyId, {
