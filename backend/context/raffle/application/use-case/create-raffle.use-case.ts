@@ -5,6 +5,8 @@ import { RaffleRepository } from "@/backend/context/raffle/domain/repositories/r
 
 import { CreateQuantityDiscountUseCase } from "@/backend/context/quantity-discount/application/use-case";
 
+import { CompanyRepository } from "@/backend/context/company/domain/repositories/company.repository";
+
 import { ValidationError } from "@/backend/shared/errors";
 
 import { uploadImage } from "@/backend/shared/cloudinary/cloudinary-uploader";
@@ -12,7 +14,8 @@ import { uploadImage } from "@/backend/shared/cloudinary/cloudinary-uploader";
 export class CreateRaffleUseCase {
   constructor(
     private raffleRepository: RaffleRepository,
-    private createQuantityDiscountUseCase: CreateQuantityDiscountUseCase
+    private createQuantityDiscountUseCase: CreateQuantityDiscountUseCase,
+    private companyRepository: CompanyRepository
   ) {}
 
   async execute(
@@ -96,6 +99,10 @@ export class CreateRaffleUseCase {
     };
 
     const raffle = await this.raffleRepository.create(raffleData);
+
+    await this.companyRepository.update(companyId, {
+      canCreateFreeRaffle: false,
+    });
 
     const createdDiscounts = [];
     if (

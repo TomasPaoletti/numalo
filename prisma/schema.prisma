@@ -34,7 +34,7 @@ model Company {
   cuit    String?
   banco   String?
 
-  canCreateFreeRaffle Boolean @default(false)
+  canCreateFreeRaffle Boolean @default(true)
 
   createdAt DateTime @default(now())
 
