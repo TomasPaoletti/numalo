@@ -6,6 +6,7 @@ import {
 } from "@/backend/context/user/application/dto";
 import { UserRepository } from "@/backend/context/user/domain/repositories/user.repository";
 import { emailSendWelcome } from "@/backend/shared/emails/email-send-welcome.email";
+import { resendAddContact } from "@/backend/shared/emails/resend-add-contact";
 import { ConflictError, ValidationError } from "@/backend/shared/errors";
 
 export class CreateUserUseCase {
@@ -37,6 +38,7 @@ export class CreateUserUseCase {
     });
 
     await emailSendWelcome({ email, firstName, lastName });
+    resendAddContact({ email, firstName, lastName });
 
     return {
       id: user.id,
