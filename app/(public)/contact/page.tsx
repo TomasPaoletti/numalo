@@ -19,10 +19,10 @@ export default function ContactPage() {
       <p>
         <span className="font-medium">Email:</span>{" "}
         <a
-          href="mailto:contacto@numeraloapp.com"
+          href="mailto:contacto@send.numeraloapp.com"
           className="font-medium underline"
         >
-          contacto@numeraloapp.com
+          contacto@send.numeraloapp.com
         </a>
       </p>
     </div>

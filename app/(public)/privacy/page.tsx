@@ -33,10 +33,10 @@ export default function PrivacyPage() {
           política describe qué información recopilamos, cómo la usamos y cómo
           la protegemos. Si tenés preguntas, escribinos a{" "}
           <a
-            href="mailto:contacto@numeraloapp.com"
+            href="mailto:contacto@send.numeraloapp.com"
             className="text-primary hover:underline"
           >
-            contacto@numeraloapp.com
+            contacto@send.numeraloapp.com
           </a>
           .
         </p>
@@ -254,10 +254,10 @@ export default function PrivacyPage() {
           Para cualquier consulta sobre esta política de privacidad o el
           tratamiento de tus datos, podés escribirnos a{" "}
           <a
-            href="mailto:contacto@numeraloapp.com"
+            href="mailto:contacto@send.numeraloapp.com"
             className="text-primary hover:underline"
           >
-            contacto@numeraloapp.com
+            contacto@send.numeraloapp.com
           </a>
           . Respondemos en un plazo máximo de 48 horas hábiles.
         </p>

@@ -18,7 +18,6 @@ export async function sendEmail({ to, subject, template }: SendEmailParams) {
     to,
     subject,
     react: template,
-    replyTo: "hola@numeraloapp.com",
   });
 
   if (error) {
