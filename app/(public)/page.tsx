@@ -126,7 +126,7 @@ const jsonLd = {
       url: "https://numeraloapp.com",
       contactPoint: {
         "@type": "ContactPoint",
-        email: "contacto@numeraloapp.com",
+        email: "contacto@send.numeraloapp.com",
         contactType: "customer service",
         availableLanguage: "Spanish",
       },
@@ -162,7 +162,10 @@ export default function LandingPage() {
           <p className="text-muted-foreground max-w-[560px] text-lg leading-relaxed">
             Organizá tu rifa, compartí el link y vendé números. Los
             participantes te transfieren directo a tu cuenta — Numeralo nunca
-            toca el dinero. <span className="text-foreground font-medium">La primera rifa la publicás gratis.</span>
+            toca el dinero.{" "}
+            <span className="text-foreground font-medium">
+              La primera rifa la publicás gratis.
+            </span>
           </p>
 
           <div className="mt-1 flex flex-wrap justify-center gap-2.5">
@@ -317,7 +320,8 @@ export default function LandingPage() {
               Tu primera rifa es gratis
             </h2>
             <p className="text-muted-foreground mx-auto mb-7 max-w-md text-[15.5px] leading-relaxed">
-              Registrate, creá tu rifa y publicala sin pagar nada. A partir de la segunda, pagás por publicación.
+              Registrate, creá tu rifa y publicala sin pagar nada. A partir de
+              la segunda, pagás por publicación.
             </p>
             <div className="flex flex-wrap justify-center gap-2.5">
               <Button size="lg" asChild>
