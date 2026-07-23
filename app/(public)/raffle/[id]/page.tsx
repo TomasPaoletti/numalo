@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { Calendar, DollarSign, ShoppingCart, Tickets } from "lucide-react";
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -20,6 +21,46 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const raffle = await GetRaffleByIdPublic(id, true);
+
+  if (!raffle || raffle.status !== RaffleStatus.ACTIVE) {
+    return { robots: { index: false } };
+  }
+
+  const baseUrl =
+    process.env.NEXT_PUBLIC_APP_URL ?? "https://numeraloapp.com";
+  const description = raffle.description
+    ? raffle.description.slice(0, 160)
+    : `Comprá tu número para la rifa "${raffle.title}". ${raffle.totalNumbers} números disponibles a ${formatPrice(raffle.numberPrice)} c/u.`;
+
+  const ogImage = raffle.image ?? "/opengraph-image.png";
+
+  return {
+    title: raffle.title,
+    description,
+    alternates: {
+      canonical: `/raffle/${id}`,
+    },
+    openGraph: {
+      title: raffle.title,
+      description,
+      url: `${baseUrl}/raffle/${id}`,
+      images: [{ url: ogImage, width: 800, height: 800, alt: raffle.title }],
+    },
+    twitter: {
+      title: raffle.title,
+      description,
+      images: [ogImage],
+    },
+  };
+}
 
 export default async function RaffleIdPublicPage({
   params,

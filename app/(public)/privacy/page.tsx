@@ -4,6 +4,9 @@ export const metadata: Metadata = {
   title: "Política de privacidad",
   description:
     "Política de privacidad de Numeralo. Cómo recopilamos, usamos y protegemos tu información personal.",
+  alternates: {
+    canonical: "/privacy",
+  },
 };
 
 function SectionNum({ n }: { n: string }) {

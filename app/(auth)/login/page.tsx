@@ -5,6 +5,7 @@ import LoginForm from "@/components/pages/login/LoginForm";
 export const metadata: Metadata = {
   title: "Iniciar sesion",
   description: "Inicia sesion en tu cuenta",
+  robots: { index: false, follow: false },
 };
 
 export default function LoginPage() {

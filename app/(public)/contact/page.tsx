@@ -4,6 +4,9 @@ export const metadata: Metadata = {
   title: "Contacto",
   description:
     "Contactate con el equipo de Numeralo para consultas sobre la plataforma de rifas online.",
+  alternates: {
+    canonical: "/contact",
+  },
 };
 
 export default function ContactPage() {

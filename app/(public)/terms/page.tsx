@@ -4,6 +4,9 @@ export const metadata: Metadata = {
   title: "Términos y condiciones",
   description:
     "Términos y condiciones de uso de Numeralo, la plataforma para crear y gestionar rifas online.",
+  alternates: {
+    canonical: "/terms",
+  },
 };
 
 function SectionNum({ n }: { n: string }) {
