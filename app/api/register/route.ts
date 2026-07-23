@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { CreateUserUseCase } from "@/backend/context/user/application/use-case";
 import { PrismaUserRepository } from "@/backend/context/user/infrastructure/database/user.prisma-repository";
 import { CustomError } from "@/backend/shared/errors";
+import { sendTelegramNotification } from "@/lib/telegram";
 
 export async function POST(req: Request) {
   try {
@@ -12,6 +13,10 @@ export async function POST(req: Request) {
     const createUserUseCase = new CreateUserUseCase(userRepository);
 
     const user = await createUserUseCase.execute(body);
+
+    sendTelegramNotification(
+      `👤 <b>Nuevo usuario registrado</b>\n${user.firstName} ${user.lastName}\n${user.email}`
+    );
 
     return NextResponse.json(user);
   } catch (error) {

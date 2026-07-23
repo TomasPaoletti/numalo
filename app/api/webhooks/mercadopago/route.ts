@@ -12,6 +12,7 @@ import { PrismaPaymentRepository } from "@/backend/context/payment/infrastructur
 import { emailSendRaffleActivate } from "@/backend/shared/emails/email-send-raffle-activate.email";
 
 import { CustomError } from "@/backend/shared/errors";
+import { sendTelegramNotification } from "@/lib/telegram";
 
 function mapStatus(mpStatus: string | undefined): PaymentStatus {
   switch (mpStatus) {
@@ -88,6 +89,10 @@ export async function POST(req: NextRequest) {
 
       // Email al rifador
       await emailSendRaffleActivate(raffleId);
+
+      sendTelegramNotification(
+        `🎟️ <b>Nueva rifa publicada</b>\nID: <code>${raffleId}</code>`
+      );
     }
 
     return NextResponse.json({ received: true });
